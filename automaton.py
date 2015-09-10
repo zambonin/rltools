@@ -8,14 +8,14 @@ class Automaton:
         self.alphabet = set()
         self.final_states = set()
         self.epsilon = 'λ'
-        #self.init_marker = 'α'
-        #self.final_marker = 'ω'
-    
+        self.new_states = set()
+        self.new_transitions = {}
+
     def determinization(self):
         for word in self.transitions:
             if word[1] == self.epsilon:
                 return self.epsilon_determinizer()
-        return self.simple_determinizer()
+            return self.simple_determinizer()
 
     def simple_determinizer(self):
         opened = {(self.init_state,)} #I'm creating a state and forcing a tuple into it
@@ -26,21 +26,30 @@ class Automaton:
             for transition in self.transitions:
                 if transition[0] == state[0]:   #If this statement is true, the loop breaks
                     break
-            else:                       
-                create_transitions(state)    
-            for transition in self.transitions:
-                if transition[0] == state[0]:
-                    if tuple(self.transitions[transition]) not in opened | closed:
-                       opened.add(tuple(self.transitions[transition]))
+                else:                       
+                    self.create_transitions(state)    
+                for transition in self.transitions:
+                    if transition[0] == state[0]:
+                        if tuple(self.transitions[transition]) not in opened | closed:
+                            opened.add(tuple(self.transitions[transition]))
             print(closed)
     
     def epsilon_determinizer(self):
         pass
-    def create_transitions(self, state)
+
+    def create_transitions(self, state):
         #TODO, create the transitions for the new state based on the union of the transitions from the states that
         #compose this one, remember to create a new dict of transitions to put this new ones and don't mix them with the 
         #transitions from the non-deterministic automaton
-        pass
+        self.new_states.add(state)
+        for letter in self.alphabet:
+            auxiliar_set = set()
+        for element in state:
+            print("elemento : ", element)
+            print("letra : ", letter)
+            auxiliar_set = auxiliar_set | self.transitions[(element, letter)] 
+            self.new_transitions[(state,letter)] = auxiliar_set
+            print("novas ", self.new_transitions) 
 def test():
     a = Automaton()
     a.states.add("q0")
