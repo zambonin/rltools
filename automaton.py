@@ -24,15 +24,19 @@ class Automaton:
             state = opened.pop()
             closed.add(tuple(state))
             for transition in self.transitions:
+                print("transition : ", transition)
                 if transition[0] == state[0]:   #If this statement is true, the loop breaks
                     break
                 else:                       
-                    self.create_transitions(state)    
+                    print("Creating transitions", state)
+                    self.create_transitions(state)
+                    #self.transitions = self.transitions and self.new_transitions
                 for transition in self.transitions:
                     if transition[0] == state[0]:
                         if tuple(self.transitions[transition]) not in opened | closed:
                             opened.add(tuple(self.transitions[transition]))
-            print(closed)
+            print("Closed : ", closed)
+            print("Opened : ", opened)
     
     def epsilon_determinizer(self):
         pass
@@ -44,12 +48,10 @@ class Automaton:
         self.new_states.add(state)
         for letter in self.alphabet:
             auxiliar_set = set()
-        for element in state:
-            print("elemento : ", element)
-            print("letra : ", letter)
-            auxiliar_set = auxiliar_set | self.transitions[(element, letter)] 
+            for element in state:
+                auxiliar_set = auxiliar_set | self.transitions[(element, letter)] 
             self.new_transitions[(state,letter)] = auxiliar_set
-            print("novas ", self.new_transitions) 
+        print("New transitions : ", self.new_transitions) 
 def test():
     a = Automaton()
     a.states.add("q0")
@@ -63,6 +65,8 @@ def test():
     a.transitions[("q0", "a")] = {"q0", "q1"}
     a.transitions[("q0","b")] = {"q0",}
     a.transitions[("q1", "a")] = {"q2"}
+    a.transitions[("q1", "b")] = set()  
+    a.transitions[("q2","a")] = set()
     a.transitions[("q2","b")] = {"q3",}
     a.transitions[("q3", "a")] = {"q3",}
     a.transitions[("q3","b")] = {"q3",}
@@ -71,5 +75,4 @@ def test():
     a.alphabet.add("a")
     a.alphabet.add("b")
     a.determinization()
-
 test()
