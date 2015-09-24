@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from pprint import pprint
 class Automaton:
     def __init__(self):
         self.states = set()
@@ -12,7 +12,7 @@ class Automaton:
         self.new_transitions = {}
 
     def determinization(self):
-        self.determinizer(self.epsilon_closure())
+        self.determinized(self.epsilon_closure())
     
     def epsilon_closure(self):
         _epsilon_closure = {}
@@ -23,18 +23,19 @@ class Automaton:
                 _epsilon_closure[state] = state
         return _epsilon_closure
    
-    def determinizer(self, epsilon_closure):
+    def determinized(self, epsilon_closure):
         opened = set(frozenset([epsilon_closure[self.init_state]]))
         closed = set(frozenset())
         while opened:
             state = opened.pop()
-            if type(state) is frozenset: #added to don't insert frozenset of frozenset
+            if type(state) is not frozenset: #added to don't insert frozenset of frozenset
+                state = frozenset([state])
                 closed.add(state)
             else:
-                closed.add(frozenset([state]))
-            if frozenset([state]) in self.transitions.keys():
-                for key in self.transitions[frozenset([state])]:
-                    aux_state = self.transitions[frozenset([state])][key]
+                closed.add(state)
+            if state in self.transitions.keys():
+                for key in self.transitions[state]:
+                    aux_state = self.transitions[state][key]
                     new_state = set()
                     for atom in aux_state: #atom is each part of the aux state (if the state is an union of two or more states)
                         new_state.add(epsilon_closure[atom])
@@ -42,38 +43,24 @@ class Automaton:
                         opened.add(frozenset(new_state))
             else:
                 self.create_transitions(state, epsilon_closure)
-                
+                for key in self.transitions[state]:
+                    aux_state = self.transitions[state][key]
+                    new_state = set()
+                    for atom in aux_state: #atom is each part of the aux state (if the state is an union of two or more states)
+                        new_state.add(epsilon_closure[atom])
+                    if new_state not in opened | closed:
+                        opened.add(frozenset(new_state))
+        #elf.create_automaton(
 
     def create_transitions(self, state, epsilon_closure):
-        #TODO, create the transitions for the new state based on the union of the transitions from the states that
-        #compose this one, remember to create a new dict of transitions to put this new ones and don't mix them with the 
-        #transitions from the non-deterministic automaton
-        self.transitions[state] = {}
-        self.new_transitions[state] = {}
-        aux_set = ()
-        print("state : ", state)
-        for atom in state: #atom is each part of the new state
-            print("atom : ", atom)
-            for letter in self.alphabet: #for each letter of the alphabet
-                aux = self.transitions[frozenset([atom])][letter] #getting the transitions from atom by letter
-                print("auxiliar : ", aux, "by letter : ", letter)
-                if len(aux) > 1: #if the atom by the letter transits to more than one state
-                    print("len is greater : ", len(aux))
-                    for atom in aux: #getting the states that the atom transits by the letter to
-                        aux_set.add(epsilon_closure[atom]) #adding the epsilon closure from that arrival state to the aux_set
-                        print("aux set after addinf atom of atom : ", aux_set)
-                else:
-                    if aux: #if the atom by the letter transits to just one state
-                        aux_set.add(epsilon_closure[aux.pop()]) #popping that state from the set aux and adding their epsilon-closure to the aux_set
-                self.transitions[state][letter] = aux_set
-                print("trazii : ", self.transitions[state])
-                self.new_transitions[state][letter] = aux_set
-                print("aux set : ", aux_set)
-            aux_set.clear() #cleaning the set for the next iteration with another letter
-        print("transitions : ", self.transitions[state])
-
-
-
+        aux_dict = {letter: set() for letter in self.alphabet} #creating an empty dict with the alphabet letter keys
+        for single in state: #atom is each part of the new state
+            for letter in self.alphabet: #for each letter of the alphabet                
+                aux = self.transitions[frozenset([single])][letter] #getting the transitions from atom by letter
+                for atom2 in aux: #getting the states that the atom transits by the letter to
+                    aux_dict[letter].add(epsilon_closure[atom2]) #adding the epsilon closure from that arrival state to the aux_set
+        self.transitions[state] = aux_dict
+        self.new_transitions[state] = aux_dict
 
 
 
@@ -108,4 +95,35 @@ def test():
     a.alphabet.add("a")
     a.alphabet.add("b")
     a.determinization()
+
+    b = Automaton()
+    b.states.add("p")
+    b.states.add("q")
+    b.states.add("r")
+
+    b.init_state = "p"
+    b.final_states.add("r")
+    
+    b.transitions[frozenset(["p"])] = {}
+    b.transitions[frozenset(["p"])]["λ"] = {"p","q"}
+    b.transitions[frozenset(["p"])]["a"] = set()
+    b.transitions[frozenset(["p"])]["b"] = {"q"}
+    b.transitions[frozenset(["p"])]["c"] = {"r"}
+
+    b.transitions[frozenset(["q"])] = {}
+    b.transitions[frozenset(["q"])]["a"] = {"p"}
+    b.transitions[frozenset(["q"])]["b"] = {"r"}
+    b.transitions[frozenset(["q"])]["c"] = {"p","q"}
+
+    b.transitions[frozenset(["r"])] = {}
+    b.transitions[frozenset(["r"])]["a"] = set()
+    b.transitions[frozenset(["r"])]["b"] = set()
+    b.transitions[frozenset(["r"])]["c"] = set()
+
+    b.alphabet.add("a")
+    b.alphabet.add("b")
+    b.alphabet.add("c")
+    b.determinization()
+    pprint(b.new_states)
+
 test()
