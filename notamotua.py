@@ -24,7 +24,10 @@ class Automaton:
         return _epsilon_closure
    
     def determinized(self, epsilon_closure):
-        opened = set(frozenset([epsilon_closure[self.init_state]]))
+        try:
+            opened = set(frozenset([epsilon_closure[self.init_state]]))
+        except TypeError:
+            opened = set(frozenset(epsilon_closure[self.init_state]))
         closed = set(frozenset())
         while opened:
             state = opened.pop()
@@ -38,7 +41,10 @@ class Automaton:
                     aux_state = self.transitions[state][key]
                     new_state = set()
                     for atom in aux_state: #atom is each part of the aux state (if the state is an union of two or more states)
-                        new_state.add(epsilon_closure[atom])
+                        try:
+                            new_state.add(epsilon_closure[atom])
+                        except TypeError:
+                            new_state.update(epsilon_closure[atom])
                     if new_state not in opened | closed:
                         opened.add(frozenset(new_state))
             else:
@@ -47,10 +53,14 @@ class Automaton:
                     aux_state = self.transitions[state][key]
                     new_state = set()
                     for atom in aux_state: #atom is each part of the aux state (if the state is an union of two or more states)
-                        new_state.add(epsilon_closure[atom])
+                        try:
+                            new_state.add(epsilon_closure[atom])
+                        except TypeError:
+                            new_state.update(epsilon_closure[atom])
                     if new_state not in opened | closed:
                         opened.add(frozenset(new_state))
         #elf.create_automaton(
+            
 
     def create_transitions(self, state, epsilon_closure):
         aux_dict = {letter: set() for letter in self.alphabet} #creating an empty dict with the alphabet letter keys
@@ -58,7 +68,11 @@ class Automaton:
             for letter in self.alphabet: #for each letter of the alphabet                
                 aux = self.transitions[frozenset([single])][letter] #getting the transitions from atom by letter
                 for atom2 in aux: #getting the states that the atom transits by the letter to
-                    aux_dict[letter].add(epsilon_closure[atom2]) #adding the epsilon closure from that arrival state to the aux_set
+                    try:
+                        aux_dict[letter].add(epsilon_closure[atom2]) #adding the epsilon closure from that arrival state to the aux_set
+                    except TypeError:
+                        aux_dict[letter].update(epsilon_closure[atom2])
+                        
         self.transitions[state] = aux_dict
         self.new_transitions[state] = aux_dict
 
@@ -95,6 +109,8 @@ def test():
     a.alphabet.add("a")
     a.alphabet.add("b")
     a.determinization()
+    pprint(a.new_transitions)
+
 
     b = Automaton()
     b.states.add("p")
@@ -124,6 +140,6 @@ def test():
     b.alphabet.add("b")
     b.alphabet.add("c")
     b.determinization()
-    pprint(b.new_states)
+    pprint(b.new_transitions)
 
 test()
