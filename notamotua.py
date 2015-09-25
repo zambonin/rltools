@@ -8,7 +8,6 @@ class Automaton:
         self.alphabet = set()
         self.final_states = set()
         self.epsilon = "λ"
-        self.new_states = set()
         self.new_transitions = {}
 
     def determinization(self):
@@ -16,26 +15,49 @@ class Automaton:
     
     def epsilon_closure(self):
         _epsilon_closure = {}
+        aux = {"u"} #just to do the first iteration of the foloowing while
+        while aux != _epsilon_closure:
+            aux = _epsilon_closure
+            for state in self.states:
+                if self.epsilon in self.transitions[frozenset([state])]:
+                    _epsilon_closure[state] = {state,} | self.transitions[frozenset([state])]["λ"]
+                else:
+                    _epsilon_closure[state] = state
+        print("Episu :",_epsilon_closure)
+        return _epsilon_closure
+
+        """_epsilon_closure = {}
         for state in self.states:
             if self.epsilon in self.transitions[frozenset([state])]: 
                 _epsilon_closure[state] = {state,} | self.transitions[frozenset([state])]["λ"]
             else:
                 _epsilon_closure[state] = state
-        return _epsilon_closure
+        return _epsilon_closure"""
    
     def determinized(self, epsilon_closure):
-        try:
-            opened = set(frozenset([epsilon_closure[self.init_state]]))
-        except TypeError:
-            opened = set(frozenset(epsilon_closure[self.init_state]))
+        closure_initial, opened = epsilon_closure[self.init_state], set()
+        if isinstance(closure_initial, str):
+            opened.add(frozenset([closure_initial]))
+            self.new_init_state = closure_initial
+        else:
+            opened.add(frozenset(closure_initial))
+            self.new_init_state = closure_initial
         closed = set(frozenset())
         while opened:
             state = opened.pop()
             if type(state) is not frozenset: #added to don't insert frozenset of frozenset
                 state = frozenset([state])
                 closed.add(state)
+                try:
+                    self.new_transitions[state] = self.transitions[state]
+                except KeyError:
+                    pass
             else:
                 closed.add(state)
+                try:
+                    self.new_transitions[state] = self.transitions[state]
+                except KeyError:
+                    pass
             if state in self.transitions.keys():
                 for key in self.transitions[state]:
                     aux_state = self.transitions[state][key]
@@ -45,8 +67,12 @@ class Automaton:
                             new_state.add(epsilon_closure[atom])
                         except TypeError:
                             new_state.update(epsilon_closure[atom])
-                    if new_state not in opened | closed:
+                    if new_state not in opened | closed and new_state:
                         opened.add(frozenset(new_state))
+                        try:
+                            self.new_transitions[frozenset(new_state)] = self.transitions[frozenset(new_state)]
+                        except KeyError:
+                            pass
             else:
                 self.create_transitions(state, epsilon_closure)
                 for key in self.transitions[state]:
@@ -57,10 +83,30 @@ class Automaton:
                             new_state.add(epsilon_closure[atom])
                         except TypeError:
                             new_state.update(epsilon_closure[atom])
-                    if new_state not in opened | closed:
+                    if new_state not in opened | closed and new_state:
                         opened.add(frozenset(new_state))
-        #elf.create_automaton(
-            
+                        try:
+                            self.new_transitions[frozenset(new_state)] = self.transitions[frozenset(new_state)]
+                        except KeyError:
+                            pass
+        self.create_dfa()
+
+    def create_dfa(self):
+        final_states = set()
+        for state in self.final_states:
+            for new_state in self.new_transitions:
+                if state & new_state:
+                    final_states.add(new_state)
+        self.final_states = final_states
+        self.init_state = self.new_init_state
+        self.states.clear()
+        for state in self.new_transitions:
+            self.states.add(state)
+
+        self.transitions = self.new_transitions
+
+
+
 
     def create_transitions(self, state, epsilon_closure):
         aux_dict = {letter: set() for letter in self.alphabet} #creating an empty dict with the alphabet letter keys
@@ -86,7 +132,7 @@ def test():
     a.states.add("q3")
 
     a.init_state = "q0"
-    a.final_states.add("q3")
+    a.final_states.add(frozenset(["q3"]))
     
     q0 = frozenset(["q0"])
     a.transitions[q0] = {}
@@ -109,16 +155,23 @@ def test():
     a.alphabet.add("a")
     a.alphabet.add("b")
     a.determinization()
-    pprint(a.new_transitions)
 
+    print("Transitions")
+    pprint(a.transitions)
+    print("Initial :",a.init_state)
+    print("States")
+    pprint(a.states)
+    print("Finals")
+    pprint(a.final_states)
 
     b = Automaton()
     b.states.add("p")
     b.states.add("q")
     b.states.add("r")
+    b.states.add("s")
 
     b.init_state = "p"
-    b.final_states.add("r")
+    b.final_states.add(frozenset("r"))
     
     b.transitions[frozenset(["p"])] = {}
     b.transitions[frozenset(["p"])]["λ"] = {"p","q"}
@@ -127,6 +180,7 @@ def test():
     b.transitions[frozenset(["p"])]["c"] = {"r"}
 
     b.transitions[frozenset(["q"])] = {}
+    b.transitions[frozenset(["q"])]["λ"] = {"r"}
     b.transitions[frozenset(["q"])]["a"] = {"p"}
     b.transitions[frozenset(["q"])]["b"] = {"r"}
     b.transitions[frozenset(["q"])]["c"] = {"p","q"}
@@ -136,10 +190,23 @@ def test():
     b.transitions[frozenset(["r"])]["b"] = set()
     b.transitions[frozenset(["r"])]["c"] = set()
 
+
+    b.transitions[frozenset(["s"])] = {}
+    b.transitions[frozenset(["r"])]["λ"] = {"s"}
+    b.transitions[frozenset(["s"])]["a"] = set()
+    b.transitions[frozenset(["s"])]["b"] = set()
+    b.transitions[frozenset(["s"])]["c"] = set()
+
     b.alphabet.add("a")
     b.alphabet.add("b")
     b.alphabet.add("c")
     b.determinization()
-    pprint(b.new_transitions)
+    print("Transitions")
+    pprint(b.transitions)
+    print("Initial :",b.init_state)
+    print("States")
+    pprint(b.states)
+    print("Finals")
+    pprint(b.final_states)
 
 test()
