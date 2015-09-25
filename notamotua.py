@@ -178,7 +178,6 @@ def test():
     b.transitions[frozenset(["p"])]["c"] = {"r"}
 
     b.transitions[frozenset(["q"])] = {}
-    b.transitions[frozenset(["q"])]["λ"] = {"r"}
     b.transitions[frozenset(["q"])]["a"] = {"p"}
     b.transitions[frozenset(["q"])]["b"] = {"r"}
     b.transitions[frozenset(["q"])]["c"] = {"p","q"}
@@ -187,13 +186,6 @@ def test():
     b.transitions[frozenset(["r"])]["a"] = set()
     b.transitions[frozenset(["r"])]["b"] = set()
     b.transitions[frozenset(["r"])]["c"] = set()
-
-
-    b.transitions[frozenset(["s"])] = {}
-    b.transitions[frozenset(["r"])]["λ"] = {"s"}
-    b.transitions[frozenset(["s"])]["a"] = set()
-    b.transitions[frozenset(["s"])]["b"] = set()
-    b.transitions[frozenset(["s"])]["c"] = set()
 
     b.alphabet.add("a")
     b.alphabet.add("b")
