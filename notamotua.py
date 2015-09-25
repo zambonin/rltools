@@ -14,25 +14,23 @@ class Automaton:
         self.determinized(self.epsilon_closure())
     
     def epsilon_closure(self):
+        def single_epsilon_closure(state):
+            epsilon_c = {state,}
+            old_epsilon_c = set()
+            while old_epsilon_c != epsilon_c:
+                old_epsilon_c = epsilon_c.copy()
+                for state in old_epsilon_c:
+                    try:
+                        epsilon_c.update(self.transitions[frozenset([state])][self.epsilon])
+                    except KeyError:
+                        pass
+            return epsilon_c
+
         _epsilon_closure = {}
-        aux = {"u"} #just to do the first iteration of the foloowing while
-        while aux != _epsilon_closure:
-            aux = _epsilon_closure
-            for state in self.states:
-                if self.epsilon in self.transitions[frozenset([state])]:
-                    _epsilon_closure[state] = {state,} | self.transitions[frozenset([state])]["λ"]
-                else:
-                    _epsilon_closure[state] = state
-        print("Episu :",_epsilon_closure)
+        for state in self.states:
+            _epsilon_closure[state] = single_epsilon_closure(state)
         return _epsilon_closure
 
-        """_epsilon_closure = {}
-        for state in self.states:
-            if self.epsilon in self.transitions[frozenset([state])]: 
-                _epsilon_closure[state] = {state,} | self.transitions[frozenset([state])]["λ"]
-            else:
-                _epsilon_closure[state] = state
-        return _epsilon_closure"""
    
     def determinized(self, epsilon_closure):
         closure_initial, opened = epsilon_closure[self.init_state], set()
