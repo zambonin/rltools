@@ -38,6 +38,10 @@ def save(path, header, obj):
                     'states' : [list(i) for i in obj.states],
                     'alphabet' : list(obj.alphabet),
                     'transitions' : handle_transitions(obj.transitions),
-                    # 'init_state' : [obj.init_state],
-                    # 'final_states' : obj.final_states
+                    'init_state' : tuple(obj.init_state),
+                    'final_states' : list(obj.final_states)
                     }, file_out, indent=4, ensure_ascii=False)
+
+aut = load('test.in')
+aut.determinize()
+save('output.out', 'automaton', aut)
