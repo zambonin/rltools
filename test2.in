@@ -1,0 +1,21 @@
+{
+    "type": "automaton",
+    "states": ["x", "y", "z"],
+    "alphabet": ["0", "1"],
+    "transitions": {
+        "x": {
+            "0": ["x", "y"],
+            "1": ["x"]
+        },
+        "y": {
+            "0": [],
+            "1": ["z"]
+        },
+        "z": {
+            "0": [],
+            "1": []
+        }
+    },
+    "init_state": "x",
+    "final_states": ["y", "z"]
+}
