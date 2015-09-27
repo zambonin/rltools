@@ -1,17 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pprint import pprint
-
-class Automaton:
-    def __init__(self, states, alphabet, transitions,
-                 init_state, final_states):
+class FiniteAutomaton:
+    def __init__(self, states, alphabet, transitions, init_state, final_states):
         self.states = states
         self.alphabet = alphabet
         self.transitions = transitions
         self.init_state = init_state
         self.final_states = final_states
         self.epsilon = "ε"
+
+    def __str__(self):
+        states = "States: %s" % (', '.join(s for s in self.states))
+        alphabet = "Alphabet: %s" % (', '.join(l for l in self.alphabet))
+        transitions = "Transitions: "
+        for t in self.transitions:
+            transitions += '\n%s: %s' % (str(list(t)), str(self.transitions[t]))
+        init_state = "Initial state: %s" % self.init_state
+        final = "Final states: %s" % (', '.join(f for f in self.final_states))
+        return "%s\n%s\n%s\n%s\n%s" % (states, alphabet, transitions,
+                                        init_state, final)
 
     def determinize(self):
         self.NFAtoDFA(self.epsilon_closure())

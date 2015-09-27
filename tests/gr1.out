@@ -1,0 +1,38 @@
+{
+    "terminals": [
+        "R",
+        "QP",
+        "QRP",
+        "RQ"
+    ],
+    "non_terminals": [
+        "c",
+        "b",
+        "a"
+    ],
+    "productions": {
+        "R": [],
+        "QRP": [
+            "cQRP",
+            "c",
+            "b",
+            "bRQ",
+            "aQP"
+        ],
+        "RQ": [
+            "cQP",
+            "bR",
+            "b",
+            "aQP"
+        ],
+        "QP": [
+            "cQRP",
+            "c",
+            "b",
+            "bRQ",
+            "aQP"
+        ]
+    },
+    "init_production": "QP",
+    "type": "grammar"
+}
