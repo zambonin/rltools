@@ -1,12 +1,14 @@
 from pprint import pprint
 from notamotua import Automaton
 
-class Regular_grammar:
-    def __init__(self, automaton):
+
+class RegularGrammar:
+    def __init__(self, productions, terminals, non_terminals, init_production):
         self.productions = {}
-        self.automaton = automaton
         self.terminals = set()
         self.non_terminals = set()
+        self.init_production = init_production
+
     def __str__(self):
         grammar = ""
         for production in self.productions:
@@ -22,40 +24,70 @@ class Regular_grammar:
         for terminal in self.terminals:
             terminals += terminal+", "
         if terminals.endswith(", "):
-            terminals = terminals[:-1]
+            terminals = terminals[:-2]
 
         non_terminals = "Non-terminals: "
 
         for non_terminal in self.non_terminals:
             non_terminals += non_terminal+", "
         if non_terminals.endswith(", "):
-            non_terminals = non_terminals[:-1]
+            non_terminals = non_terminals[:-2]
 
         initial_prodction = "Initital Production: "+self.init_production
 
         return terminals+"\n"+non_terminals+"\n"+initial_prodction+"\n"+grammar
 
-
-    def automaton_to_grammar(self):
-        self.non_terminals.update(self.automaton.alphabet)
+    def automaton_to_grammar(self, automaton):
+        self.non_terminals.update(automaton.alphabet)
         init_prod = ""
-        for part in self.automaton.init_state:
+        for part in automaton.init_state:
             init_prod += part.upper()
         self.init_production = init_prod
-        for state in self.automaton.transitions: #each state of the automaton
+        for state in automaton.transitions: #each state of the automaton
             terminal = ""
             for part in state:
                 terminal += part.upper()
             self.productions[terminal] = set()
             self.terminals.add(terminal)
-            for letter in self.automaton.transitions[state]: #each letter of the alphabet
+            for letter in automaton.transitions[state]: #each letter of the alphabet
                 aux = ""
-                for i in self.automaton.transitions[state][letter]:
+                for i in automaton.transitions[state][letter]:
                     aux += i.upper()
                 if aux != "":
                     self.productions[terminal].add(letter+aux)
-                if self.automaton.transitions[state][letter] in self.automaton.final_states:
+                if automaton.transitions[state][letter] in automaton.final_states:
                     self.productions[terminal].add(letter)
+
+    def grammar_to_automaton(self):
+        states = set()
+        transitions = {}
+        final_states = set()
+        initial_state = self.init_production.lower()
+        alphabet = self.non_terminals
+        for production in self.productions:
+            states.add(production.lower())
+            transitions[frozenset([production.lower()])] ={}
+            for part in self.productions[production]:
+                if len(part) > 1:
+                    transitions[frozenset([production.lower()])][part[0]] = part[1:].lower()
+
+            for part in self.productions[production]: #putting the final states
+                if len(part) == 1:
+                    final_states.add(frozenset([transitions[frozenset([production.lower()])][part]]))
+        if len(self.productions[production]) == 0:
+            for symbol in alphabet:
+                transitions[frozenset([production.lower()])][symbol] = set()
+
+        automaton = Automaton()
+        automaton.alphabet = alphabet
+        automaton.transitions = transitions
+        automaton.final_states = final_states
+        automaton.init_state = initial_state
+        automaton.states = states
+        return automaton
+
+
+
 
 
 def test():
@@ -89,16 +121,48 @@ def test():
     b.alphabet.add("b")
     b.alphabet.add("c")
     b.determinization()
-    """print("Transitions")
-    pprint(b.transitions)
-    print("Initial :",b.init_state)
-    print("States")
-    pprint(b.states)
-    print("Finals")
-    pprint(b.final_states)"""
 
-    r = Regular_grammar(b)
-    r.automaton_to_grammar()
+    r = RegularGrammar({}, set(), set(), "")
+    r.automaton_to_grammar(b)
     print(r)
+    e = r.grammar_to_automaton()
+
+
+    a = Automaton()
+    a.states.add("q0")
+    a.states.add("q1")
+    a.states.add("q2")
+    a.states.add("q3")
+
+    a.init_state = "q0"
+    a.final_states.add(frozenset(["q3"]))
+
+    q0 = frozenset(["q0"])
+    a.transitions[q0] = {}
+    a.transitions[q0]["a"] = {"q0", "q1"}
+    a.transitions[q0]["b"] = {"q0"}
+
+    a.transitions[frozenset(["q1"])] = {}
+    a.transitions[frozenset(["q1"])]["a"] = {"q2"}
+    a.transitions[frozenset(["q1"])]["b"] = set()
+
+    a.transitions[frozenset(["q2"])] = {}
+    a.transitions[frozenset(["q2"])]["a"] = set()
+    a.transitions[frozenset(["q2"])]["b"] = {"q3"}
+
+    a.transitions[frozenset(["q3"])] = {}
+    a.transitions[frozenset(["q3"])]["a"] = {"q3"}
+    a.transitions[frozenset(["q3"])]["b"] = {"q3"}
+
+
+    a.alphabet.add("a")
+    a.alphabet.add("b")
+    a.determinization()
+
+    r = RegularGrammar({}, set(), set(), "")
+    r.automaton_to_grammar(a)
+    print(r)
+    d = r.grammar_to_automaton()
+
 test()
 
