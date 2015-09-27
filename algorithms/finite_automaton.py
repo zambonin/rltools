@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 class FiniteAutomaton:
     def __init__(self, states, alphabet, transitions, init_state, final_states):
@@ -11,13 +11,14 @@ class FiniteAutomaton:
         self.epsilon = "ε"
 
     def __str__(self):
-        states = "States: %s" % (', '.join(s for s in self.states))
+        states = "States: %s" % (', '.join(str(set(s)) for s in self.states))
         alphabet = "Alphabet: %s" % (', '.join(l for l in self.alphabet))
         transitions = "Transitions: "
         for t in self.transitions:
             transitions += '\n%s: %s' % (str(list(t)), str(self.transitions[t]))
         init_state = "Initial state: %s" % self.init_state
-        final = "Final states: %s" % (', '.join(f for f in self.final_states))
+        final = "Final states: %s" % (', '.join(
+                                        str(set(f)) for f in self.final_states))
         return "%s\n%s\n%s\n%s\n%s" % (states, alphabet, transitions,
                                         init_state, final)
 
@@ -40,13 +41,12 @@ class FiniteAutomaton:
         return {state : single_closure(state) for state in self.states}
 
     def NFAtoDFA(self, epsilon_closure):
+        opened, closed, final_states = set(), set(), set()
+        new_transitions = {}
+
         init_closure = epsilon_closure[self.init_state]
         new_init_state = init_closure
-
-        opened, closed, final_states = set(), set(), set()
         opened.add(frozenset(init_closure))
-
-        new_transitions = {}
 
         while opened:
             state = opened.pop()
@@ -88,3 +88,33 @@ class FiniteAutomaton:
         for state in new_transitions:
             self.states.add(state)
         self.transitions = new_transitions
+
+# def test():
+#     states = {"p", "q", "r", "s"}
+#     alphabet = {"a", "b", "c"}
+#     transitions = {
+#         frozenset(["p"]) : {
+#             "ε" : {'p', 'q'},
+#             'a' : set(),
+#             'b' : {'q'},
+#             'c' : {'r'}
+#         },
+#         frozenset(["q"]) : {
+#             'a' : {'p'},
+#             'b' : {"r"},
+#             'c' : {'p', 'q'}
+#         },
+#         frozenset(['r']) : {
+#             'a' : set(),
+#             'b' : set(),
+#             'c' : set()
+#         }
+#     }
+#     init_state = 'p'
+#     final_states = {frozenset('r')}
+
+#     b = FiniteAutomaton(states, alphabet, transitions, init_state, final_states)
+#     b.determinize()
+
+# test()
+

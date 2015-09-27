@@ -1,0 +1,24 @@
+.\" Manpage for rltools.
+.\" Contact gustavo.zambonin@grad.ufsc.br to correct errors or typos.
+.TH man 7 "27 Set 2015" "1.0" "rltools man page"
+.SH NAME
+.B rltools
+\- regular language tools
+.SH SYNOPSIS
+.BR rltools " \fIOPTION\fP... \fIFILE\fP..."
+.SH DESCRIPTION
+rltools is a package of resources used to manage type-3 formal language
+representations (finite automata, regular grammars and regular expressions).
+.SH OPTIONS
+.TP
+.BI \--dfa\  file
+Converts a nondeterministic finite automaton (with or without epsilon-moves)
+to a deterministic finite automaton.
+.TP
+.BI \--gta\  file
+Converts a regular grammar to a deterministic finite automaton.
+.TP
+.BI \--atg\  file
+Converts a deterministic finit automaton to a regular language.
+.SH AUTHOR
+Written by Gustavo Zambonin and Matheus Ben-Hur de Melo Leite.

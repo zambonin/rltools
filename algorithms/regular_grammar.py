@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from finite_automaton import FiniteAutomaton
+from algorithms.finite_automaton import FiniteAutomaton
 
 class RegularGrammar:
     def __init__(self, non_terminals, terminals, productions, init_production):
@@ -23,7 +23,7 @@ class RegularGrammar:
 
         init_prod = "Initial production: " + self.init_production
 
-        return "%s\n%s\n%s\n%s" % (terminals, non_term, init_prod, grammar)
+        return "%s\n%s\n%s\n%s" % (non_term, terminals, init_prod, grammar)
 
     def automaton_to_grammar(aut):
         non_terminals = aut.alphabet
@@ -32,11 +32,11 @@ class RegularGrammar:
         init_production = "".join(part.upper() for part in aut.init_state)
 
         for state in aut.transitions:
-            terminal = "".join(part.upper() for part in state)
+            terminal = ",".join(part.upper() for part in state)
             productions[terminal] = set()
             terminals.add(terminal)
             for letter in aut.transitions[state]:
-                aux = "".join(i.upper() for i in aut.transitions[state][letter])
+                aux = ",".join(i.upper() for i in aut.transitions[state][letter])
                 if aux != "":
                     productions[terminal].add(letter + aux)
                 if aut.transitions[state][letter] in aut.final_states:
@@ -69,3 +69,36 @@ class RegularGrammar:
 
         return FiniteAutomaton(states, alphabet, transitions,
                                initial_state, final_states)
+
+# def test():
+#     states = {"p", "q", "r", "s"}
+#     alphabet = {"a", "b", "c"}
+#     transitions = {
+#         frozenset(["p"]) : {
+#             "ε" : {'p', 'q'},
+#             'a' : set(),
+#             'b' : {'q'},
+#             'c' : {'r'}
+#         },
+#         frozenset(["q"]) : {
+#             'a' : {'p'},
+#             'b' : {"r"},
+#             'c' : {'p', 'q'}
+#         },
+#         frozenset(['r']) : {
+#             'a' : set(),
+#             'b' : set(),
+#             'c' : set()
+#         }
+#     }
+#     init_state = 'p'
+#     final_states = {frozenset('r')}
+
+#     b = FiniteAutomaton(states, alphabet, transitions, init_state, final_states)
+#     b.determinize()
+#     r = RegularGrammar.automaton_to_grammar(b)
+
+#     print(r)
+
+# test()
+

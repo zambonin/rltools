@@ -3,10 +3,15 @@
 
 import json
 from copy import deepcopy
-from finite_automaton import FiniteAutomaton
-from regular_grammar import RegularGrammar
+from algorithms.finite_automaton import FiniteAutomaton
+from algorithms.regular_grammar import RegularGrammar
 
 def load(path):
+    def handle_states(states):
+        if isinstance(states[0], list):
+            return {frozenset(i) for i in states}
+        return set(states)
+
     def handle_transitions(old_dict):
         new = {frozenset([i]) : old_dict[i] for i in old_dict}
         for i in new:
@@ -14,15 +19,25 @@ def load(path):
                 new[i][j] = set(new[i][j])
         return new
 
+    def handle_final(final_s):
+        new = set()
+        for i in final_s:
+            if isinstance(i, list):
+                new.add(frozenset(i))
+            else:
+                new.add(frozenset([i]))
+        return new
+
     with open(path) as file_in:
         data = json.load(file_in)
         header = data['type']
 
         if header == 'automaton':
-            return FiniteAutomaton(set(data['states']), set(data['alphabet']),
+            return FiniteAutomaton(handle_states(data['states']),
+                                   data['alphabet'],
                                    handle_transitions(data['transitions']),
                                    data['init_state'],
-                                   {frozenset(data['final_states'])})
+                                   handle_final(data['final_states']))
 
         if header == 'grammar':
             return RegularGrammar(set(data['non_terminals']),
@@ -32,17 +47,40 @@ def load(path):
                                   data['init_production'])
 
 def save(path, header, obj):
+    def handle_transitions(old_dict):
+        new = {",".join(l for l in list(i)) : old_dict[i] for i in old_dict}
+        for i in new:
+            for j in new[i]:
+                if isinstance(new[i][j], set):
+                    new[i][j] = list(new[i][j])
+                else:
+                    new[i][j] = new[i][j].split(',')
+        return new
+
+    def handle_states(old_list):
+        new = []
+        for i in old_list:
+            if len(i) > 1 and not isinstance(i, frozenset):
+                new.append(i.split(','))
+            else:
+                new.append(list(i))
+        return new
+
+    def handle_init(state):
+        if isinstance(state, set):
+            return list(state)[0]
+        return state
+
     obj = deepcopy(obj)
     with open(path, 'w', encoding='utf8') as file_out:
         if header == 'automaton':
             json.dump({
                         'type' : 'automaton',
-                        'states' : [list(i) for i in obj.states],
+                        'states' : handle_states(obj.states),
                         'alphabet' : list(obj.alphabet),
-                        'transitions' : {str(list(i)) : list(i)
-                                            for i in obj.transitions},
-                        'init_state' : tuple(obj.init_state),
-                        'final_states' : [list(i) for i in obj.final_states]
+                        'transitions' : handle_transitions(obj.transitions),
+                        'init_state' : handle_init(obj.init_state),
+                        'final_states' : handle_states(obj.final_states)
                     }, file_out, indent=4, ensure_ascii=False)
 
         if header == 'grammar':
@@ -54,4 +92,3 @@ def save(path, header, obj):
                                             for i in obj.productions},
                         'init_production' : obj.init_production,
                       }, file_out, indent=4, ensure_ascii=False)
-
