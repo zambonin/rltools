@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import json
-from copy import deepcopy
-from algorithms.finite_automaton import FiniteAutomaton
-from algorithms.regular_grammar import RegularGrammar
-
 """io_manager.py
 
 Tool for loading and saving objects as JSON files.
 
 Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 """
+
+import json
+from copy import deepcopy
+from algorithms.finite_automaton import FiniteAutomaton
+from algorithms.regular_grammar import RegularGrammar
 
 def load(path):
     def handle_states(states):
