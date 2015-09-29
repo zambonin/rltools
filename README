@@ -1,0 +1,37 @@
+UFSC/CTC/INE
+INE5421 - Linguagens Formais e Compiladores (2015/2)
+Grupo:  Gustavo Zambonin (13104307)
+        Matheus Ben-Hur de Melo Leite (13100765)
+
+Trabalho I - Algoritmos para Manipulação de Linguagens Regulares
+
+O trabalho foi desenvolvido na linguagem Python, por conta de sua 
+facilidade com a manipulação de objetos de diversos tipos 
+dinamicamente. Quase todas as informações pertinentes à execução do 
+programa podem ser encontrados executando sua manpage com o comando 
+
+    man ./rltools
+
+no diretório onde este arquivo está localizado. Argumentos inválidos
+serão negados pelo programa, na medida do possível.
+
+Um arquivo semi-automatizado de testes foi criado na pasta homônima
+para facilidade de verificação da regularidade de operações de leitura
+e escrita. Escrito em Bash, ele executa determinizações e traduções
+para gramáticas e expressões regulares sucessivamente, utilizando
+saídas antigas do programa, caracterizando ciclos de execução que
+garantem a corretude do conteúdo dos arquivos. 
+
+    sh autotester.sh <arquivo com autômato finito não-determinístico>
+
+Por fim, algumas regras para modelagem de arquivo de entrada de
+autômato seguem abaixo. Arquivos para gramáticas e expressões
+regulares são semelhantes, diferindo apenas na representação do
+conteúdo. Exemplos podem ser gerados utilizando o script acima.
+
+* transições por épsilon devem ser adicionadas apenas aos estados 
+necessários
+* o estado deve conter todas as possibilidades de transições por 
+letras do alfabeto, mesmo que estas sejam vazias.
+
+                                                            02/10/2015

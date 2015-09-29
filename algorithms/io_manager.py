@@ -6,6 +6,13 @@ from copy import deepcopy
 from algorithms.finite_automaton import FiniteAutomaton
 from algorithms.regular_grammar import RegularGrammar
 
+"""io_manager.py
+
+Tool for loading and saving objects as JSON files.
+
+Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
+"""
+
 def load(path):
     def handle_states(states):
         if isinstance(states[0], list):

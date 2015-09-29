@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+"""rltools.py
+
+The command-line interface for this program.
+
+Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
+"""
+
 import re
 import sys
 from algorithms.io_manager import *

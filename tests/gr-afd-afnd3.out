@@ -1,49 +1,49 @@
 {
-    "init_production": "Q0",
-    "terminals": [
-        "Q0,Q1,Q2",
-        "Q0",
-        "Q0,Q1,Q3",
-        "Q0,Q3",
-        "Q0,Q1,Q2,Q3",
-        "Q0,Q1"
-    ],
+    "productions": {
+        "Q3,Q0": [
+            "bQ3,Q0",
+            "b",
+            "a",
+            "aQ1,Q3,Q0"
+        ],
+        "Q2,Q1,Q0": [
+            "bQ3,Q0",
+            "b",
+            "aQ1,Q0,Q2"
+        ],
+        "Q0": [
+            "aQ1,Q0",
+            "bQ0"
+        ],
+        "Q3,Q1,Q0": [
+            "bQ3,Q0",
+            "b",
+            "aQ1,Q3,Q0,Q2",
+            "a"
+        ],
+        "Q1,Q0": [
+            "bQ0",
+            "aQ1,Q0,Q2"
+        ],
+        "Q3,Q2,Q1,Q0": [
+            "bQ3,Q0",
+            "b",
+            "aQ1,Q3,Q0,Q2",
+            "a"
+        ]
+    },
     "non_terminals": [
         "a",
         "b"
     ],
-    "productions": {
-        "Q0,Q1,Q2": [
-            "aQ1,Q2,Q0",
-            "bQ3,Q0",
-            "b"
-        ],
-        "Q0,Q1,Q2,Q3": [
-            "a",
-            "bQ3,Q0",
-            "aQ1,Q3,Q2,Q0",
-            "b"
-        ],
-        "Q0": [
-            "bQ0",
-            "aQ1,Q0"
-        ],
-        "Q0,Q1,Q3": [
-            "a",
-            "bQ3,Q0",
-            "aQ1,Q3,Q2,Q0",
-            "b"
-        ],
-        "Q0,Q3": [
-            "aQ1,Q3,Q0",
-            "a",
-            "bQ3,Q0",
-            "b"
-        ],
-        "Q0,Q1": [
-            "aQ1,Q2,Q0",
-            "bQ0"
-        ]
-    },
-    "type": "grammar"
+    "type": "grammar",
+    "terminals": [
+        "Q2,Q1,Q0",
+        "Q0",
+        "Q3,Q0",
+        "Q3,Q1,Q0",
+        "Q1,Q0",
+        "Q3,Q2,Q1,Q0"
+    ],
+    "init_production": "Q0"
 }

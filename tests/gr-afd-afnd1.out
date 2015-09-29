@@ -1,38 +1,38 @@
 {
     "init_production": "Q",
-    "terminals": [
-        "Q,P",
-        "R,Q",
-        "R",
-        "R,Q,P"
-    ],
-    "type": "grammar",
     "non_terminals": [
         "a",
         "b",
         "c"
     ],
     "productions": {
-        "Q,P": [
-            "c",
-            "aP,Q",
-            "cP,R,Q",
+        "Q,R": [
             "b",
-            "bR,Q"
-        ],
-        "R": [],
-        "R,Q": [
-            "cP,Q",
-            "aP,Q",
-            "b",
+            "aQ,P",
+            "cQ,P",
             "bR"
         ],
-        "R,Q,P": [
-            "c",
-            "aP,Q",
-            "cP,R,Q",
+        "R": [],
+        "Q,R,P": [
             "b",
-            "bR,Q"
+            "cQ,R,P",
+            "aQ,P",
+            "c",
+            "bQ,R"
+        ],
+        "Q,P": [
+            "b",
+            "cQ,R,P",
+            "aQ,P",
+            "c",
+            "bQ,R"
         ]
-    }
+    },
+    "terminals": [
+        "Q,R",
+        "R",
+        "Q,R,P",
+        "Q,P"
+    ],
+    "type": "grammar"
 }

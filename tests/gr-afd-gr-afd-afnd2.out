@@ -1,31 +1,31 @@
 {
-    "type": "grammar",
-    "productions": {
-        "X,Z": [
-            "0",
-            "0Y,X",
-            "1X"
-        ],
-        "X,Y": [
-            "1",
-            "0",
-            "1X,Z",
-            "0Y,X"
-        ],
-        "X": [
-            "0",
-            "0Y,X",
-            "1X"
-        ]
-    },
     "terminals": [
+        "X",
         "X,Z",
-        "X,Y",
-        "X"
+        "X,Y"
     ],
-    "init_production": "X",
     "non_terminals": [
         "0",
         "1"
-    ]
+    ],
+    "init_production": "X",
+    "type": "grammar",
+    "productions": {
+        "X": [
+            "0Y,X",
+            "1X",
+            "0"
+        ],
+        "X,Y": [
+            "0Y,X",
+            "1Z,X",
+            "0",
+            "1"
+        ],
+        "X,Z": [
+            "0Y,X",
+            "1X",
+            "0"
+        ]
+    }
 }

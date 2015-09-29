@@ -1,5 +1,17 @@
 {
-    "init_state": "x",
+    "states": [
+        [
+            "x"
+        ],
+        [
+            "x",
+            "y"
+        ],
+        [
+            "x",
+            "z"
+        ]
+    ],
     "final_states": [
         [
             "y",
@@ -40,22 +52,10 @@
             ]
         }
     },
-    "states": [
-        [
-            "x"
-        ],
-        [
-            "x",
-            "y"
-        ],
-        [
-            "x",
-            "z"
-        ]
-    ],
-    "type": "automaton",
     "alphabet": [
         "0",
         "1"
-    ]
+    ],
+    "type": "automaton",
+    "init_state": "x"
 }
