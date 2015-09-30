@@ -34,23 +34,42 @@ class RegularExpression:
 
         def concatenation(self, transition):
             automaton = Automaton(set(),set(),{},"",set())
-            automaton.init_state = "q0"
-            auxd = {}
-            aux = 0
+            automatons = []
+            transitions={}
+            aux_int = 0
+            last_state = []
             for letter in transition:
+                automatons.append(single_state(self,letter))
+                aux_autom = automatons.pop()
                 automaton.alphabet.add(letter)
-                automaton.states.add("q"+str(aux)+letter)
-                auxd[frozenset(["q"+str(aux)+letter])] = {}
-                auxd[frozenset(["q"+str(aux)+letter])][letter] ={frozenset(["q"+str((aux+1))+letter])}
-                ++aux
-            automaton.final_states.add("q"+str(len(letter))+letter[len(letter)-1])
-            automaton.transitions = auxd
+                if aux_int == 0:
+                    automaton.init_state = (aux_autom.init_state)+str(aux_int)
+                for state in aux_autom.states:
+                    automaton.states.add(state+str(aux_int))
+                    automaton.transitions[frozenset([state+str(aux_int)])] = {}
+                    if frozenset([state]) in aux_autom.transitions:
+                        for step in aux_autom.transitions[frozenset([state])]:
+                            next = set(aux_autom.transitions[frozenset([state])][step].pop())
+                            actual = frozenset([state+str(aux_int)])
+                            automaton.transitions[actual][step] = {}
+                            automaton.transitions[actual][step] = {frozenset([next.pop()+str(aux_int)])}
+                            if aux_int != 0:
+                                lst_state = last_state.pop(0)
+                                automaton.final_states.remove(lst_state)
+                                automaton.transitions[frozenset([lst_state])][automaton.epsilon] = {frozenset([state+str(aux_int)])}
+                    else:
+                        automaton.final_states.add(state+str(aux_int))
+                        last_state.append(state+str(aux_int))
+                aux_int+=1
+
+
+
             return automaton
 
-        if len(self.expression) == 2:
+        if len(self.expression) == 3:
             return concatenation(self, self.expression)
 def test():
-    a = RegularExpression("ab", {"a","b"})
+    a = RegularExpression("abc", {"a","b","c"})
     aux = a.regular_to_automaton()
     pprint(aux.transitions)
     print("final:",aux.final_states)
