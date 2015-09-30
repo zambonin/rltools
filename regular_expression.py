@@ -9,6 +9,7 @@ class RegularExpression:
         self.alphabet = alphabet
         self.empty_word = "ε"
 
+    @property
     def regular_to_automaton(self):
         def single_state(self, transition):
             automaton = Automaton(set(),set(),{},"",set())
@@ -35,7 +36,6 @@ class RegularExpression:
         def concatenation(self, transition):
             automaton = Automaton(set(),set(),{},"",set())
             automatons = []
-            transitions={}
             aux_int = 0
             last_state = []
             for letter in transition:
@@ -61,16 +61,44 @@ class RegularExpression:
                         automaton.final_states.add(state+str(aux_int))
                         last_state.append(state+str(aux_int))
                 aux_int+=1
+            return self.fix_automaton(automaton)
+
+        def or_operation(self, transition):
+            automaton = Automaton(set(),set(),{},"",set())
+            automatons = []
+            automaton.init_state = "initialOr"
+            automaton.states.add("initialOr")
+            automaton.transitions[frozenset(["initialOr"])] = {}
+            automaton.transitions[frozenset(["initialOr"])][automaton.epsilon] = set()
+            for letter in transition:
+                if letter != "|":
+                    automatons.append(single_state(self,letter))
+                    for automaton_aux in automatons:
+                        automatons.remove(automaton_aux)
+                        automaton.alphabet.add(automaton_aux.alphabet.pop())
+                        automaton.states.update(automaton_aux.states)
+                        automaton.final_states.update(automaton_aux.final_states)
+                        automaton.transitions[frozenset(["initialOr"])][automaton.epsilon].add(automaton_aux.init_state)
+            return self.fix_automaton(automaton)
 
 
 
-            return automaton
+        if len(self.expression) == 7:
+            return or_operation(self, self.expression)
 
-        if len(self.expression) == 3:
-            return concatenation(self, self.expression)
+    def fix_automaton(self, automaton):
+        for letter in automaton.alphabet:
+            for state in automaton.transitions:
+                try:
+                    automaton.transitions[state][letter]
+                except KeyError:
+                    automaton.transitions[state][letter] = {}
+                    automaton.transitions[state][letter] = set()
+        return automaton
+
 def test():
-    a = RegularExpression("abc", {"a","b","c"})
-    aux = a.regular_to_automaton()
+    a = RegularExpression("a|b|c|d", {"a","b","c","d"})
+    aux = a.regular_to_automaton
     pprint(aux.transitions)
     print("final:",aux.final_states)
     print("init:",aux.init_state)
