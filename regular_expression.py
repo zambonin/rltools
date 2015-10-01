@@ -9,7 +9,6 @@ class RegularExpression:
         self.alphabet = alphabet
         self.empty_word = "ε"
 
-    @property
     def regular_to_automaton(self):
         def single_state(self, transition):
             automaton = Automaton(set(),set(),{},"",set())
@@ -21,8 +20,9 @@ class RegularExpression:
             aux = {}
             aux[frozenset(["q0"+transition])] = {}
             aux[frozenset(["q0"+transition])][transition] = {frozenset(["q1"+transition])}
+            aux[frozenset(["q1"+transition])] = {}
             automaton.transitions = aux
-            return automaton
+            return self.fix_automaton(automaton)
 
         def empty_word(self):
             automaton = Automaton(set(),set(),{},"",set())
@@ -33,21 +33,19 @@ class RegularExpression:
             automaton.transitions = aux
             return automaton
 
-        def concatenation(self, transition):
+        def concatenation(self, automatons):
             automaton = Automaton(set(),set(),{},"",set())
-            automatons = []
+            automatons = automatons
             aux_int = 0
             last_state = []
-            for letter in transition:
-                automatons.append(single_state(self,letter))
-                aux_autom = automatons.pop()
-                automaton.alphabet.add(letter)
+            for aux_autom in automatons:
+                automaton.alphabet.update(aux_autom.alphabet)
                 if aux_int == 0:
                     automaton.init_state = (aux_autom.init_state)+str(aux_int)
                 for state in aux_autom.states:
                     automaton.states.add(state+str(aux_int))
                     automaton.transitions[frozenset([state+str(aux_int)])] = {}
-                    if frozenset([state]) in aux_autom.transitions:
+                    if frozenset([state]) in aux_autom.transitions and state not in aux_autom.final_states:
                         for step in aux_autom.transitions[frozenset([state])]:
                             next = set(aux_autom.transitions[frozenset([state])][step].pop())
                             actual = frozenset([state+str(aux_int)])
@@ -63,28 +61,49 @@ class RegularExpression:
                 aux_int+=1
             return self.fix_automaton(automaton)
 
-        def or_operation(self, transition):
+        def or_operation(self, automatons):
             automaton = Automaton(set(),set(),{},"",set())
-            automatons = []
+            automatons = automatons
             automaton.init_state = "initialOr"
             automaton.states.add("initialOr")
             automaton.transitions[frozenset(["initialOr"])] = {}
             automaton.transitions[frozenset(["initialOr"])][automaton.epsilon] = set()
-            for letter in transition:
-                if letter != "|":
-                    automatons.append(single_state(self,letter))
-                    for automaton_aux in automatons:
-                        automatons.remove(automaton_aux)
-                        automaton.alphabet.add(automaton_aux.alphabet.pop())
-                        automaton.states.update(automaton_aux.states)
-                        automaton.final_states.update(automaton_aux.final_states)
-                        automaton.transitions[frozenset(["initialOr"])][automaton.epsilon].add(automaton_aux.init_state)
+            for automaton_aux in automatons:
+                automaton.alphabet.add(automaton_aux.alphabet.pop())
+                automaton.states.update(automaton_aux.states)
+                automaton.transitions.update(automaton_aux.transitions)
+                automaton.final_states.update(automaton_aux.final_states)
+                automaton.transitions[frozenset(["initialOr"])][automaton.epsilon].add(automaton_aux.init_state)
+            return self.fix_automaton(automaton)
+
+        def closure(self, automatons):
+            automaton = Automaton(set(),set(),{},"",set())
+            automatons = automatons
+            automaton.init_state = "initialClosure"
+            automaton.states.add("initialClosure")
+            automaton.final_states.add("initialClosure")
+            automaton.transitions[frozenset(["initialClosure"])] = {}
+            automaton.transitions[frozenset(["initialClosure"])][automaton.epsilon] = set()
+            for automaton_aux in automatons:
+                automaton.alphabet.add(automaton_aux.alphabet.pop())
+                automaton.states.update(automaton_aux.states)
+                automaton.final_states.update(automaton_aux.final_states)
+                automaton.transitions[frozenset(["initialClosure"])][automaton.epsilon].add(automaton_aux.init_state)
+                automaton.transitions.update(automaton_aux.transitions)
+                for state in automaton_aux.final_states:
+                    automaton.transitions[frozenset([state])][automaton.epsilon] = set()
+                    automaton.transitions[frozenset([state])][automaton.epsilon].add(frozenset(["initialClosure"]))
             return self.fix_automaton(automaton)
 
 
 
-        if len(self.expression) == 7:
-            return or_operation(self, self.expression)
+        if len(self.expression) == 3:
+            automatons = []
+            for letter in self.expression:
+                automatons.append(single_state(self, letter))
+            aut = []
+            aut.append(concatenation(self, automatons))
+            return closure(self, aut)
 
     def fix_automaton(self, automaton):
         for letter in automaton.alphabet:
@@ -97,8 +116,8 @@ class RegularExpression:
         return automaton
 
 def test():
-    a = RegularExpression("a|b|c|d", {"a","b","c","d"})
-    aux = a.regular_to_automaton
+    a = RegularExpression("abc", {"a","b","c"})
+    aux = a.regular_to_automaton()
     pprint(aux.transitions)
     print("final:",aux.final_states)
     print("init:",aux.init_state)
