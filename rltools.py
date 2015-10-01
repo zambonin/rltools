@@ -10,13 +10,16 @@ Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 
 import re
 import sys
-from algorithms.io_manager import *
+from algorithms.io_manager import load, save
+from algorithms.finite_automaton import FiniteAutomaton
+from algorithms.regular_grammar import RegularGrammar
+from algorithms.regular_expression import RegularExpression
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("Basic usage: man ./rltools")
 
-    possible_commands = ["--dfa", "--gta", "--atg"]
+    possible_commands = ["--dfa", "--gta", "--atg", "--rta", "--atr"]
 
     if len(set(sys.argv).intersection(possible_commands)) > 1:
         print("Only one flag is permitted at a time.")
@@ -29,7 +32,11 @@ if __name__ == '__main__':
             aut = load(sys.argv[2])
             if type(aut) is FiniteAutomaton:
                 aut.determinize()
-                savepath = 'afd-' + re.sub('.in', r'.out', sys.argv[2])
+                outpath = re.sub('.in', r'.out', sys.argv[2])
+                if '/' in outpath:
+                    savepath = re.sub('/', r'/afd-', outpath)
+                else:
+                    savepath = 'afd-' + outpath
                 save(savepath, 'automaton', aut)
                 print("DFA saved in %s!" % savepath)
             else:
@@ -39,7 +46,11 @@ if __name__ == '__main__':
             grm = load(sys.argv[2])
             if type(grm) is RegularGrammar:
                 aut = RegularGrammar.grammar_to_automaton(grm)
-                savepath = 'afd-' + re.sub('.in', r'.out', sys.argv[2])
+                outpath = re.sub('.in', r'.out', sys.argv[2])
+                if '/' in outpath:
+                    savepath = re.sub('/', r'/afd-', outpath)
+                else:
+                    savepath = 'afd-' + outpath
                 save(savepath, 'automaton', aut)
                 print("DFA saved in %s!" % savepath)
             else:
@@ -49,9 +60,41 @@ if __name__ == '__main__':
             aut = load(sys.argv[2])
             if type(aut) is FiniteAutomaton:
                 grm = RegularGrammar.automaton_to_grammar(aut)
-                savepath = 'gr-' + re.sub('.in', r'.out', sys.argv[2])
+                outpath = re.sub('.in', r'.out', sys.argv[2])
+                if '/' in outpath:
+                    savepath = re.sub('/', r'/gr-', outpath)
+                else:
+                    savepath = 'gr-' + outpath
                 save(savepath, 'grammar', grm)
                 print("GR saved in %s!" % savepath)
+            else:
+                print("Input must be an automaton.")
+
+        elif "--rta" in sys.argv:
+            reg = load(sys.argv[2])
+            if type(reg) is RegularExpression:
+                aut = RegularExpression.regexp_to_automaton(reg)
+                outpath = re.sub(r'.in', r'.out', sys.argv[2])
+                if '/' in outpath:
+                    savepath = re.sub('/', r'/afd-', outpath)
+                else:
+                    savepath = 'afd-' + outpath
+                save(savepath, 'automaton', aut)
+                print("DFA saved in %s!" % savepath)
+            else:
+                print("Input must be a regular expression.")
+
+        elif "--atr" in sys.argv:
+            aut = load(sys.argv[2])
+            if type(aut) is FiniteAutomaton:
+                reg = RegularExpression.automaton_to_regexp(aut)
+                outpath = re.sub(r'.in', r'.out', sys.argv[2])
+                if '/' in outpath:
+                    savepath = re.sub('/', r'/re-', outpath)
+                else:
+                    savepath = 're-' + outpath
+                save(savepath, 'regexp', reg)
+                print("RE saved in %s!" % savepath)
             else:
                 print("Input must be an automaton.")
 

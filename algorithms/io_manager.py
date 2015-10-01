@@ -5,6 +5,7 @@ import json
 from copy import deepcopy
 from algorithms.finite_automaton import FiniteAutomaton
 from algorithms.regular_grammar import RegularGrammar
+from algorithms.regular_expression import RegularExpression
 
 """io_manager.py
 
@@ -75,12 +76,13 @@ def save(path, header, obj):
 
     def handle_init(state):
         if isinstance(state, set):
-            return list(state)[0]
+            return list(state)
         return state
 
     obj = deepcopy(obj)
     with open(path, 'w', encoding='utf8') as file_out:
         if header == 'automaton':
+            print(obj.init_state)
             json.dump({
                         'type' : 'automaton',
                         'states' : handle_states(obj.states),
