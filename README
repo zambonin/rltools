@@ -1,38 +1,35 @@
 UFSC/CTC/INE
-INE5421 - Linguagens Formais e Compiladores (2015/2)
-Grupo:  Gustavo Zambonin (13104307)
-        Matheus Ben-Hur de Melo Leite (13100765)
+INE5421 - Formal Languages and Compilers (2015/2)
+Students:   Gustavo Zambonin (13104307)
+            Matheus Ben-Hur de Melo Leite (13100765)
 
-Trabalho I - Algoritmos para Manipulação de Linguagens Regulares
+Pratice I - Algorithms for Manipulation of Regular Languages
 
-O trabalho foi desenvolvido na linguagem Python, por conta de sua 
-facilidade com a manipulação de objetos de diversos tipos 
-dinamicamente. Quase todas as informações pertinentes à execução do 
-programa podem ser encontrados executando sua manpage com o comando 
+The language chosen to code these algorithms was Python, for it is
+easier to manipulate object types dynamically. Almost all the 
+information related to the program's workings may be found through its
+manpage, with the command
 
     man ./rltools
 
-no diretório onde este arquivo está localizado. Argumentos inválidos
-serão negados pelo programa, na medida do possível.
+where it is located (inside this folder). Invalid arguments will be
+rejected by the program when possible.
 
-Um arquivo semi-automatizado de testes foi criado na pasta homônima
-para facilidade de verificação da regularidade de operações de leitura
-e escrita. Escrito em Bash, ele executa determinizações e traduções
-para gramáticas e expressões regulares sucessivamente, utilizando
-saídas antigas do programa, caracterizando ciclos de execução que
-garantem a corretude do conteúdo dos arquivos. 
+A semi-automated test file was placed on the associated folder for
+these operations, making it easier to claim the consistency of the I/O
+operations. Powered by Bash scripting, it executes determinizations
+and conversions from and to finite automata, regular grammars and
+regular expressions consecutively using the same outputs it created
+earlier in a cyclic manner, asserting the files' contents regularity.
 
-    sh autotester.sh <arquivo com autômato finito não-determinístico>
+    sh autotester.sh <non-deterministic finite automaton input file>
 
-Por fim, algumas regras para modelagem de arquivo de entrada de
-autômato seguem abaixo. Arquivos para gramáticas e expressões
-regulares são semelhantes, diferindo apenas na representação do
-conteúdo. Exemplos podem ser gerados utilizando o script acima.
+Finally, some design rules for an input automaton file are described
+below. Grammar and expression files' structure is alike. Examples for
+those can be generated using the above script.
 
-* transições por épsilon devem ser adicionadas apenas aos estados 
-necessários
-* o estado deve conter todas as possibilidades de transições por 
-letras do alfabeto, mesmo que estas sejam vazias.
+* epsilon-moves must be added only to the required states;
+* a state must consist of all the transitions through letters of the
+alphabet, even if those are empty.
 
                                                             02/10/2015
-

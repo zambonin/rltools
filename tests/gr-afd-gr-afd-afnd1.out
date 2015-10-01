@@ -1,0 +1,38 @@
+{
+    "init_production": "PQ",
+    "terminals": [
+        "R,Q",
+        "P,Q",
+        "R,Q,P",
+        "R"
+    ],
+    "type": "grammar",
+    "productions": {
+        "R,Q": [
+            "bR",
+            "cP,Q",
+            "b",
+            "aP,Q"
+        ],
+        "P,Q": [
+            "bQ,R",
+            "cP,Q,R",
+            "c",
+            "b",
+            "aP,Q"
+        ],
+        "R,Q,P": [
+            "bQ,R",
+            "cP,Q,R",
+            "c",
+            "b",
+            "aP,Q"
+        ],
+        "R": []
+    },
+    "non_terminals": [
+        "a",
+        "c",
+        "b"
+    ]
+}

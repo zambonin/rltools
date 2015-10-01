@@ -65,31 +65,38 @@ def save(path, header, obj):
                     new[i][j] = new[i][j].split(',')
         return new
 
-    def handle_states(old_list):
-        new = []
-        for i in old_list:
-            if len(i) > 1 and not isinstance(i, frozenset):
-                new.append(i.split(','))
-            else:
-                new.append(list(i))
-        return new
+    def handle_states(old_list, old_init, old_final):
+        def handle_list(old):
+            new = []
+            for i in old:
+                if len(i) > 1 and not isinstance(i, frozenset):
+                    new.append(i.split(','))
+                else:
+                    new.append(list(i))
+            return new
 
-    def handle_init(state):
-        if isinstance(state, set):
-            return list(state)
-        return state
+        def handle_init(oldl, oldi):
+            if oldi in list(oldl):
+                if isinstance(oldi, set):
+                    return list(oldi)
+                elif isinstance(oldi, str):
+                    return [oldi]
+            elif ",".join(oldi) in oldl:
+                return list(set(oldi))
+
+        return handle_list(old_list), handle_init(old_list, old_init), handle_list(old_final)
 
     obj = deepcopy(obj)
     with open(path, 'w', encoding='utf8') as file_out:
         if header == 'automaton':
-            print(obj.init_state)
+            t = handle_states(obj.states, obj.init_state, obj.final_states)
             json.dump({
                         'type' : 'automaton',
-                        'states' : handle_states(obj.states),
+                        'states' : t[0],
                         'alphabet' : list(obj.alphabet),
                         'transitions' : handle_transitions(obj.transitions),
-                        'init_state' : handle_init(obj.init_state),
-                        'final_states' : handle_states(obj.final_states)
+                        'init_state' : t[1],
+                        'final_states' : t[2],
                     }, file_out, indent=4, ensure_ascii=False)
 
         if header == 'grammar':
@@ -100,4 +107,10 @@ def save(path, header, obj):
                         'productions' : {i : list(obj.productions[i])
                                             for i in obj.productions},
                         'init_production' : obj.init_production,
+                      }, file_out, indent=4, ensure_ascii=False)
+
+        if header == 'regexp':
+            json.dump({
+                      'type' : 'regexp',
+                      'expression' : obj,
                       }, file_out, indent=4, ensure_ascii=False)

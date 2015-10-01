@@ -7,18 +7,25 @@
 .SH SYNOPSIS
 .BR rltools " \fIOPTION\fP... \fIFILE\fP..."
 .SH DESCRIPTION
-rltools is a package of resources used to manage type-3 formal language representations 
-(finite automata, regular grammars and regular expressions).
+rltools is a package of resources used to manage and generate type-3 
+formal language representations (finite automata, regular grammars and
+regular expressions).
 .SH OPTIONS
 .TP
 .BI \--dfa\  file
-Converts a nondeterministic finite automaton, either with or without epsilon-moves, to 
-a deterministic finite automaton.
+Converts a nondeterministic finite automaton, either with or without
+epsilon-moves, to a determinized finite automaton.
 .TP
 .BI \--gta\  file
-Converts a regular grammar to a deterministic finite automaton.
+Converts a regular grammar to a determinized finite automaton.
 .TP
 .BI \--atg\  file
-Converts a deterministic finit automaton to a regular language.
+Converts a determinized finite automaton to a regular grammar.
+.TP
+.BI \--rta\  file
+Convers a regular expression to a determinized finite automaton.
+.TP
+.BI \--atr\  file
+Converts a determinized finite automaton to a regular expression.
 .SH AUTHOR
 Written by Gustavo Zambonin and Matheus Ben-Hur de Melo Leite.
