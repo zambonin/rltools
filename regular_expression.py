@@ -7,6 +7,7 @@ class RegularExpression:
     def __init__(self, expression, alphabet):
         self.expression = expression
         self.alphabet = alphabet
+        self.list = []
         self.empty_word = "ε"
 
     def regular_to_automaton(self):
@@ -96,14 +97,41 @@ class RegularExpression:
             return self.fix_automaton(automaton)
 
 
+        def analyse_expression(self, expression):
+            expression = expression
+            i = 0
+            while len(expression) != 0:
+                if expression[i] in self.alphabet:
+                    self.list.append(expression[i])
+                    expression = expression[:i] + expression[i+1:]
+                elif expression[i] == "|":
+                    next = expression[i+1]
+                    if next == "(":
+                        aux = 2
+                        while next != ")":
+                            next = expression[i+aux]
+                            if next != ")":
+                                self.list.append(next)
+                            aux+=1
+                        expression = expression[:i] + expression[i+aux:]
+                    else:
+                        self.list.append(next)
+                        expression = expression[:i] + expression[i+2:]
+                    self.list.append("|")
+                elif expression[i] == "(" or expression[i] == ")":
+                    expression = expression[:i] + expression[i+1:]
+                elif expression[i] == "*":
+                    self.list.append("*")
+                    expression = expression[:i] + expression[i+1:]
+            return expression
 
-        if len(self.expression) == 3:
-            automatons = []
-            for letter in self.expression:
-                automatons.append(single_state(self, letter))
-            aut = []
-            aut.append(concatenation(self, automatons))
-            return closure(self, aut)
+        return analyse_expression(self, self.expression)
+
+
+
+
+
+
 
     def fix_automaton(self, automaton):
         for letter in automaton.alphabet:
@@ -116,7 +144,7 @@ class RegularExpression:
         return automaton
 
 def test():
-    a = RegularExpression("abc", {"a","b","c"})
+    a = RegularExpression("(((a|b)*)|(b*))*", {"a","b"})
     aux = a.regular_to_automaton()
     pprint(aux.transitions)
     print("final:",aux.final_states)
