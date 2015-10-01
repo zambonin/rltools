@@ -96,6 +96,31 @@ class RegularExpression:
                     automaton.transitions[frozenset([state])][automaton.epsilon].add(frozenset(["initialClosure"]))
             return self.fix_automaton(automaton)
 
+        def execute_operations(self):
+            automatons = []
+            while len(self.list) != 0:
+                caracter = self.list.pop(0)
+                if caracter in self.alphabet:
+                    if len(automatons) == 2 and self.list[0] in self.alphabet:
+                        automatons_aux = [automatons.pop()]
+                        automatons_aux.append(single_state(self, caracter))
+                        automatons.append(concatenation(self, automatons_aux))
+                    else:
+                        automatons.append(single_state(self, caracter))
+                if caracter == "|":
+                    if len(automatons) > 2 and len(automatons) == 3:
+                        automatons_aux = [automatons.pop(1)]
+                        automatons_aux.append(automatons.pop())
+                        automatons.append(concatenation(self, automatons_aux))
+                    automatons = [or_operation(self, automatons)]
+                if caracter == "*":
+                    aut = [automatons.pop()]
+                    automatons.append(closure(self, aut))
+
+            if len(automatons) == 2:
+                return concatenation(self, automatons)
+            else:
+                return automatons.pop()
 
         def analyse_expression(self, expression):
             expression = expression
@@ -123,9 +148,9 @@ class RegularExpression:
                 elif expression[i] == "*":
                     self.list.append("*")
                     expression = expression[:i] + expression[i+1:]
-            return expression
 
-        return analyse_expression(self, self.expression)
+        analyse_expression(self, self.expression)
+        return execute_operations(self)
 
 
 
@@ -144,7 +169,7 @@ class RegularExpression:
         return automaton
 
 def test():
-    a = RegularExpression("(((a|b)*)|(b*))*", {"a","b"})
+    a = RegularExpression("(((a|b)*)|(bbb*))*", {"a","b"})
     aux = a.regular_to_automaton()
     pprint(aux.transitions)
     print("final:",aux.final_states)
