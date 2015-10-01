@@ -28,8 +28,9 @@ class RegularExpression:
         for x in transitions:
             for t in transitions[x]:
                 expr[x, frozenset(transitions[x][t])] = t
-
+        
         while len(states) > 2:
+            pprint(expr)
             s = next(x for x in states if isinstance(x, frozenset))
             for x in states:
                 for y in states:
@@ -38,8 +39,6 @@ class RegularExpression:
                         l2 = expr[s, s]
                         l3 = expr[s, y]
                         l4 = expr[x, y]
-
-                        print(l1, l2, l3, l4)
 
                         if l2 == None and l4 == None:
                             part_re = "(%s)(%s)" % (l1, l3)
