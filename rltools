@@ -26,6 +26,6 @@ Converts a regular expression to a determinized finite automaton. Use double
 quotes on the whole string to represent special characters.
 .TP
 .BI \--atr\  file
-Converts a determinized finite automaton to a regular expression.
+Converts a finite automaton to a regular expression.
 .SH AUTHOR
 Written by Gustavo Zambonin and Matheus Ben-Hur de Melo Leite.

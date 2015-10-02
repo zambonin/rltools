@@ -1,35 +1,37 @@
 UFSC/CTC/INE
 INE5421 - Formal Languages and Compilers (2015/2)
-Students:   Gustavo Zambonin (13104307)
-            Matheus Ben-Hur de Melo Leite (13100765)
+Gustavo Zambonin (13104307) & Matheus Ben-Hur de Melo Leite (13100765)
 
 Pratice I - Algorithms for Manipulation of Regular Languages
 
-The language chosen to code these algorithms was Python, for it is
-easier to manipulate object types dynamically. Almost all the 
-information related to the program's workings may be found through its
-manpage, with the command
+The language chosen to code these algorithms was Python, for it is easier to
+manipulate object types dynamically. Almost all the information related to the
+program's workings may be found through its manpage, with the command
 
     man ./rltools
 
-where it is located (inside this folder). Invalid arguments will be
-rejected by the program when possible.
+where it is located (inside this folder). Invalid arguments will be rejected by
+the program when possible.
 
-A semi-automated test file was placed on the associated folder for
-these operations, making it easier to claim the consistency of the I/O
-operations. Powered by Bash scripting, it executes determinizations
-and conversions from and to finite automata, regular grammars and
-regular expressions consecutively using the same outputs it created
-earlier in a cyclic manner, asserting the files' contents regularity.
+A semi-automated test file was placed on the associated folder for these
+operations, making it easier to claim the consistency of the I/O operations.
+Powered by Bash scripting, it executes determinizations and conversions from and
+to finite automata, regular grammars and regular expressions consecutively using
+the same outputs it created earlier in a cyclic manner, asserting the files'
+contents regularity.
 
     sh autotester.sh <non-deterministic finite automaton input file>
 
-Finally, some design rules for an input automaton file are described
-below. Grammar and expression files' structure is alike. Examples for
-those can be generated using the above script.
+Finally, some design rules for an input automaton file are described below.
+Grammar and expression files' structure is alike. Examples for those can be
+generated using the above script.
 
 * epsilon-moves must be added only to the required states;
-* a state must consist of all the transitions through letters of the
-alphabet, even if those are empty.
+* a state must consist of all the transitions through letters of the alphabet,
+even if those are empty.
 
-                                                            02/10/2015
+The regular expression parser accepts only unary letters alphabets. Hence, an
+expression of the form "(q0|q1*)" will be parsed with the set {'q', '0', '1'}
+as its symbols and won't match a possible desired {'q0', 'q1'} set.
+
+                                                                    02/10/2015

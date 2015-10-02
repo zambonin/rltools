@@ -56,10 +56,8 @@ class RegularGrammar(object):
         Returns:
             The equivalent regular grammar for the given automaton.
         """
-        non_terminals = aut.alphabet
         terminals = set()
         productions = {}
-        init_production = "".join(part.upper() for part in aut.init_state)
 
         for state in aut.transitions:
             terminal = ",".join(part.upper() for part in state)
@@ -73,8 +71,8 @@ class RegularGrammar(object):
                 if aut.transitions[state][letter] in aut.final_states:
                     productions[terminal].add(letter)
 
-        return RegularGrammar(non_terminals, terminals,
-                              productions, init_production)
+        return RegularGrammar(aut.alphabet, terminals, productions,
+                              "".join(part.upper() for part in aut.init_state))
 
     def grammar_to_automaton(gram):
         """Transforms a regular grammmar to a DFA.
@@ -85,26 +83,26 @@ class RegularGrammar(object):
         Returns:
             The equivalent DFA for the given regular grammar.
         """
-        states, final_states = set(), set()
         alphabet = gram.non_terminals
+        states, final_states = set(), set()
         transitions = {}
-        initial_state = gram.init_production.lower()
 
         for production in gram.productions:
             states.add(production.lower())
-            transitions[frozenset([production.lower()])] = {}
+            prod = frozenset([production.lower()])
+            transitions[prod] = {}
 
             for part in gram.productions[production]:
                 if len(part) > 1:
-                    transitions[frozenset([production.lower()])][part[0]] = part[1:].lower()
+                    transitions[prod][part[0]] = part[1:].lower()
 
             for part in gram.productions[production]:
                 if len(part) == 1:
-                    final_states.add(transitions[frozenset([production.lower()])][part])
+                    final_states.add(transitions[prod][part])
 
             if len(gram.productions[production]) == 0:
                 for symbol in alphabet:
-                    transitions[frozenset([production.lower()])][symbol] = set()
+                    transitions[prod][symbol] = set()
 
         return FiniteAutomaton(states, alphabet, transitions,
-                               initial_state, final_states)
+                               gram.init_production.lower(), final_states)

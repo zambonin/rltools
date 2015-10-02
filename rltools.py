@@ -77,7 +77,7 @@ if __name__ == '__main__':
                 aut = RegularExpression.regexp_to_automaton(regexp)
                 savepath = "tests/afnd-reg.out"
                 save(savepath, 'automaton', aut)
-                print("DFA saved in %s!" % savepath)
+                print("Automaton saved in %s!" % savepath)
             else:
                 print("Input must be a regular expression.")
 

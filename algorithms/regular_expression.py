@@ -292,9 +292,51 @@ class RegularExpression(object):
             return self.add_transitions(self.concat_op(partial_auts))
         return self.add_transitions(partial_auts.pop())
 
+    def rename_aut(self, automaton):
+        """Makes the automaton's states' names readable.
+
+        Attributes:
+            automaton: the automaton with confusing names.
+
+        Returns:
+            An automaton with normal names for states.
+        """
+
+        new_aut = FiniteAutomaton(set(), automaton.alphabet, {}, "", set())
+
+        new_states = {}
+        for i, j in zip(automaton.states, range(len(automaton.states))):
+            new_states[i] = 'q' + str(j)
+
+        for i in new_states:
+            state = set([new_states[i]])
+            new_aut.states.add(frozenset(state))
+            if frozenset([i]) in automaton.final_states:
+                final_state = set([new_states[i]])
+                new_aut.final_states.add(frozenset(final_state))
+            if i == automaton.init_state:
+                new_aut.init_state = set([new_states[i]])
+
+        for i in automaton.transitions:
+            new_key = frozenset([new_states[list(set(i))[0]]])
+            new_aut.transitions[new_key] = {}
+            for j in automaton.transitions[i]:
+                new_aut.transitions[new_key][j] = automaton.transitions[i][j]
+                for k in automaton.transitions[i][j]:
+                    if len(k) > 1:
+                        to_these_states = {new_states[i] for i in
+                            automaton.transitions[i][j]}
+                        new_aut.transitions[new_key][j] = to_these_states
+                    elif isinstance(k, frozenset):
+                        to_this_state = set([new_states[list(set(k))[0]]])
+                        new_aut.transitions[new_key][j] = to_this_state
+
+        return new_aut
+
     def regexp_to_automaton(self):
         """Calls the right methods in the right order."""
-        return self.execute_operations(self.analyse_expression(self.expression))
+        final = self.execute_operations(self.analyse_expression(self.expression))
+        return self.rename_aut(final)
 
     def automaton_to_regexp(automaton):
         """Converts a finite automaton into a vanilla, non-reduced regular
@@ -339,7 +381,6 @@ class RegularExpression(object):
                 expr[x, frozenset(transitions[x][t])] = t
 
         while len(states) > 2:
-            pprint(expr)
             s = next(x for x in states if isinstance(x, frozenset))
             for x in states:
                 for y in states:
