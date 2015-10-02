@@ -17,13 +17,13 @@ class RegularExpression:
             automaton.alphabet.add(transition)
             automaton.states.add("q0"+transition)
             automaton.states.add("q1"+transition)
-            automaton.final_states.add("q1"+transition)
+            automaton.final_states.add(frozenset(["q1"+transition]))
             aux = {}
             aux[frozenset(["q0"+transition])] = {}
             aux[frozenset(["q0"+transition])][transition] = {frozenset(["q1"+transition])}
             aux[frozenset(["q1"+transition])] = {}
             automaton.transitions = aux
-            return self.renaming_automaton(automaton, "%")
+            return self.fix_automaton(automaton)
 
         def empty_word(self):
             automaton = Automaton(set(),set(),{},"",set())
@@ -47,39 +47,12 @@ class RegularExpression:
             automaton.transitions.update(automaton2.transitions)
             for state in automaton1.final_states:
                 try:
-                    automaton.transitions[state][automaton.epsilon].add(automaton2.initial_state)
+                    automaton.transitions[state][automaton.epsilon].add(frozenset([automaton2.init_state]))
                 except KeyError:
                     automaton.transitions[state][automaton.epsilon] = set()
-                    automaton.transitions[state][automaton.epsilon].add(automaton2.initial_state)
+                    automaton.transitions[state][automaton.epsilon].add(frozenset([automaton2.init_state]))
+            return self.fix_automaton(automaton)
 
-
-
-            """automaton = Automaton(set(),set(),{},"",set())
-            automatons = automatons
-            aux_int = 0
-            last_state = []
-            for aux_autom in automatons:
-                automaton.alphabet.update(aux_autom.alphabet)
-                if aux_int == 0:
-                    automaton.init_state = (aux_autom.init_state)+"_"+str(aux_int)
-                for state in aux_autom.states:
-                    automaton.states.add(state+"_"+str(aux_int))
-                    automaton.transitions[frozenset([state+"_"+str(aux_int)])] = {}
-                    if frozenset([state]) in aux_autom.transitions and state not in aux_autom.final_states:
-                        for step in aux_autom.transitions[frozenset([state])]:
-                            next = set(aux_autom.transitions[frozenset([state])][step].pop())
-                            actual = frozenset([state+"_"+str(aux_int)])
-                            automaton.transitions[actual][step] = {}
-                            automaton.transitions[actual][step] = {frozenset([next.pop()+"_"+str(aux_int)])}
-                            if aux_int != 0:
-                                lst_state = last_state.pop(0)
-                                automaton.final_states.remove(lst_state)
-                                automaton.transitions[frozenset([lst_state])][automaton.epsilon] = {frozenset([state+"_"+str(aux_int)])}
-                    else:
-                        automaton.final_states.add(state+"_"+str(aux_int))
-                        last_state.append(state+"_"+str(aux_int))
-                aux_int+=1
-            return self.fix_automaton(automaton)"""
 
         def or_operation(self, automatons):
             automaton = Automaton(set(),set(),{},"",set())
@@ -101,18 +74,22 @@ class RegularExpression:
             automatons = automatons
             automaton.init_state = "initialClosure"
             automaton.states.add("initialClosure")
-            automaton.final_states.add("initialClosure")
+            automaton.final_states.add(frozenset(["initialClosure"]))
             automaton.transitions[frozenset(["initialClosure"])] = {}
             automaton.transitions[frozenset(["initialClosure"])][automaton.epsilon] = set()
             for automaton_aux in automatons:
                 automaton.alphabet.add(automaton_aux.alphabet.pop())
                 automaton.states.update(automaton_aux.states)
                 automaton.final_states.update(automaton_aux.final_states)
-                automaton.transitions[frozenset(["initialClosure"])][automaton.epsilon].add(automaton_aux.init_state)
+                automaton.transitions[frozenset(["initialClosure"])][automaton.epsilon].add(frozenset([automaton_aux.init_state]))
                 automaton.transitions.update(automaton_aux.transitions)
                 for state in automaton_aux.final_states:
-                    automaton.transitions[frozenset([state])][automaton.epsilon] = set()
-                    automaton.transitions[frozenset([state])][automaton.epsilon].add(frozenset(["initialClosure"]))
+                    try:
+                        automaton.transitions[state][automaton.epsilon] = set()
+                    except KeyError:
+                        automaton.transitions[state] = {}
+                        automaton.transitions[state][automaton.epsilon] = set()
+                    automaton.transitions[state][automaton.epsilon].add(frozenset(["initialClosure"]))
             return self.fix_automaton(automaton)
 
         def execute_operations(self):
@@ -121,9 +98,15 @@ class RegularExpression:
                 caracter = self.list.pop(0)
                 if caracter in self.alphabet:
                     if len(automatons) == 2 and self.list[0] in self.alphabet:
-                        automatons_aux = [automatons.pop()]
-                        automatons_aux.append(single_state(self, caracter))
+                        automatons_aux = [automatons.pop(0)]
+                        automatons_aux.append(automatons.pop(0))
                         automatons.append(concatenation(self, automatons_aux))
+                        automatons.append(single_state(self, caracter))
+                    elif len(automatons) == 2:
+                        automatons_aux = [automatons.pop(0)]
+                        automatons_aux.append(automatons.pop(0))
+                        automatons.append(concatenation(self, automatons_aux))
+                        automatons.append(single_state(self, caracter))
                     else:
                         automatons.append(single_state(self, caracter))
                 if caracter == "|":
@@ -132,19 +115,20 @@ class RegularExpression:
                         automatons_aux.append(automatons.pop())
                         automatons.append(concatenation(self, automatons_aux))
                     automatons = [or_operation(self, automatons)]
-                #if caracter == "*":
-                    #aut = [automatons.pop()]
-                    #automatons.append(closure(self, aut))
+                if caracter == "*":
+                    aut = [automatons.pop()]
+                    automatons.append(closure(self, aut))
 
             if len(automatons) == 2:
-                return concatenation(self, automatons)
+                return self.fix_automaton(concatenation(self, automatons))
             else:
-                return automatons.pop()
+                return self.fix_automaton(automatons.pop())
 
         def analyse_expression(self, expression):
             expression = expression
             i = 0
             while len(expression) != 0:
+                value = expression[i]
                 if expression[i] in self.alphabet:
                     self.list.append(expression[i])
                     expression = expression[:i] + expression[i+1:]
@@ -158,9 +142,16 @@ class RegularExpression:
                                 self.list.append(next)
                             aux+=1
                         expression = expression[:i] + expression[i+aux:]
-                    else:
-                        self.list.append(next)
-                        expression = expression[:i] + expression[i+2:]
+
+                    elif next in self.alphabet:
+                        after_next = expression[i+2]
+                        if after_next == "*":
+                            self.list.append(next)
+                            self.list.append(after_next)
+                            expression = expression[:i] + expression[i+3:]
+                        else:
+                            self.list.append(next)
+                            expression = expression[:i] + expression[i+2:]
                     self.list.append("|")
                 elif expression[i] == "(" or expression[i] == ")":
                     expression = expression[:i] + expression[i+1:]
@@ -176,7 +167,7 @@ class RegularExpression:
             automaton_aux.alphabet.update(automaton.alphabet)
             automaton_aux.init_state = automaton.init_state+sufix
             for state in automaton.final_states:
-                automaton_aux.final_states.add(frozenset([set([state]).pop()+sufix]))
+                automaton_aux.final_states.add(frozenset([set(state).pop()+sufix]))
             for state in automaton.states:
                 automaton_aux.states.add(state+sufix)
             for state in automaton.transitions:
@@ -184,7 +175,8 @@ class RegularExpression:
                 for symbol in automaton.transitions[state]:
                     automaton_aux.transitions[frozenset([set(state).pop()+sufix])][symbol] = set()
                     for element in automaton.transitions[state][symbol]:
-                        automaton_aux.transitions[frozenset([set(state).pop()+sufix])][symbol].add(frozenset([set(element).pop()+sufix]))
+                        to_add = frozenset([set(element).pop()+sufix])
+                        automaton_aux.transitions[frozenset([set(state).pop()+sufix])][symbol].add(to_add)
             return automaton_aux
 
     def fix_automaton(self, automaton):
@@ -200,7 +192,7 @@ class RegularExpression:
 
 
 def test():
-    a = RegularExpression("(((a|b)*)|(bbb*))*", {"a","b"})
+    a = RegularExpression("(a|b)*", {"a", "b"})
     aux = a.regular_to_automaton()
     pprint(aux.transitions)
     print("final:",aux.final_states)
