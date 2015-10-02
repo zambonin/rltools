@@ -1,0 +1,31 @@
+{
+    "init_production": "X",
+    "productions": {
+        "X,Z": [
+            "0Y,X",
+            "0",
+            "1X"
+        ],
+        "X,Y": [
+            "0Y,X",
+            "0",
+            "1Z,X",
+            "1"
+        ],
+        "X": [
+            "0Y,X",
+            "0",
+            "1X"
+        ]
+    },
+    "terminals": [
+        "X,Z",
+        "X,Y",
+        "X"
+    ],
+    "non_terminals": [
+        "0",
+        "1"
+    ],
+    "type": "grammar"
+}

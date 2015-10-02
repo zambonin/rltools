@@ -1,0 +1,49 @@
+{
+    "type": "grammar",
+    "terminals": [
+        "Q0,Q2,Q1,Q3",
+        "Q0",
+        "Q0,Q1",
+        "Q0,Q1,Q3",
+        "Q0,Q3",
+        "Q0,Q2,Q1"
+    ],
+    "init_production": "Q0",
+    "non_terminals": [
+        "a",
+        "b"
+    ],
+    "productions": {
+        "Q0,Q2,Q1,Q3": [
+            "aQ0,Q1,Q2,Q3",
+            "bQ0,Q3",
+            "b",
+            "a"
+        ],
+        "Q0": [
+            "bQ0",
+            "aQ0,Q1"
+        ],
+        "Q0,Q1": [
+            "aQ0,Q1,Q2",
+            "bQ0"
+        ],
+        "Q0,Q1,Q3": [
+            "aQ0,Q1,Q2,Q3",
+            "bQ0,Q3",
+            "b",
+            "a"
+        ],
+        "Q0,Q2,Q1": [
+            "aQ0,Q1,Q2",
+            "bQ0,Q3",
+            "b"
+        ],
+        "Q0,Q3": [
+            "b",
+            "bQ0,Q3",
+            "aQ0,Q1,Q3",
+            "a"
+        ]
+    }
+}

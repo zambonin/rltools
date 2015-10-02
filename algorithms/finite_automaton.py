@@ -1,11 +1,22 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
-from pprint import pprint
+"""finite_automaton.py
 
-class Automaton:
-    def __init__(self, states, alphabet, transitions,
-                 init_state, final_states):
+Definition of a finite automaton and construction of deterministic finite
+automata through the powerset construction method, also handling epsilon-moves.
+
+Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
+"""
+
+class FiniteAutomaton:
+    """A finite automaton is defined as a 5-tuple (Q, Σ, δ, q0, F) such that:
+    Q is a finite set of states;
+    Σ is a finite set of input symbols called the alphabet;
+    δ : Q × Σ → Q (or, verbally, a transition function);
+    q0 ∈ Q is a start state;
+    F ⊆ Q is a set of accept states."""
+    def __init__(self, states, alphabet, transitions, init_state, final_states):
         self.states = states
         self.alphabet = alphabet
         self.transitions = transitions
@@ -13,11 +24,23 @@ class Automaton:
         self.final_states = final_states
         self.epsilon = "ε"
 
-    def determinize(self):
-        self.NFAtoDFA(self.epsilon_closure())
+    def __str__(self):
+        """Pretty-print the finite automaton object attributes."""
+        states = "States: %s" % (', '.join(str(set(s)) for s in self.states))
+        alphabet = "Alphabet: %s" % (', '.join(l for l in self.alphabet))
+        transitions = "Transitions: "
+        for t in self.transitions:
+            transitions += '\n%s: %s' % (str(list(t)), str(self.transitions[t]))
+        init_state = "Initial state: %s" % self.init_state
+        final = "Final states: %s" % (', '.join(
+                                        str(set(f)) for f in self.final_states))
+        return "%s\n%s\n%s\n%s\n%s" % (states, alphabet, transitions,
+                                        init_state, final)
 
     def epsilon_closure(self):
+        """Compute the epsilon-closure for each state of the input NFA."""
         def single_closure(state):
+            """Compute the epsilon-closure for a single state of a NFA."""
             closure, old_closure = {state,}, set()
             while old_closure != closure:
                 old_closure = closure.copy()
@@ -31,14 +54,15 @@ class Automaton:
 
         return {state : single_closure(state) for state in self.states}
 
-    def NFAtoDFA(self, epsilon_closure):
+    def determinize(self):
+        """Modify the input automaton to be caracterized as a DFA."""
+        opened, closed, final_states = set(), set(), set()
+        new_transitions = {}
+
+        epsilon_closure = self.epsilon_closure()
         init_closure = epsilon_closure[self.init_state]
         new_init_state = init_closure
-
-        opened, closed, final_states = set(), set(), set()
         opened.add(frozenset(init_closure))
-
-        new_transitions = {}
 
         while opened:
             state = opened.pop()
@@ -52,9 +76,9 @@ class Automaton:
                 aux_dict = {letter: set() for letter in self.alphabet}
                 for atom in state: # an atom is each part of a new state
                     for letter in self.alphabet:
-                        aux = self.transitions[frozenset([atom])][letter] # getting the transitions from atom by letter
-                        for dest in aux: # getting the states that the atom transits to, by said letter
-                            aux_dict[letter] |= epsilon_closure[dest] # adding the epsilon closure from that arrival state to the aux_set
+                        aux = self.transitions[frozenset([atom])][letter]
+                        for dest in aux:
+                            aux_dict[letter] |= epsilon_closure[dest]
                 self.transitions[state] = aux_dict
                 new_transitions[state] = aux_dict
 

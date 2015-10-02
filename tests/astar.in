@@ -1,0 +1,26 @@
+{
+    "alphabet": [
+        "a"
+    ],
+    "final_states": [
+        [
+            "a"
+        ]
+    ],
+    "init_state": [
+        "a"
+    ],
+    "transitions": {
+        "a": {
+            "a": [
+                "a"
+            ]
+        }
+    },
+    "states": [
+        [
+            "a"
+        ]
+    ],
+    "type": "automaton"
+}
