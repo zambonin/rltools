@@ -12,7 +12,7 @@ Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 
 from algorithms.finite_automaton import FiniteAutomaton
 
-class RegularGrammar:
+class RegularGrammar(object):
     """A regular grammar is defined as a 4-tuple (N, Σ, P, S) such that:
     N is a list of non-terminals. These are variables replaced by terminals
     according to the production rules;
@@ -22,9 +22,12 @@ class RegularGrammar:
         * B -> bA (B, A ∈ N and a ∈ Σ; only in right-regular grammars);
         * B -> Ab (B, A ∈ N and a ∈ Σ; only in left-regular grammars);
         * B -> ε (B ∈ N and ε is the string of length 0);
-    S is the start symbol, a production that begins a derivation process, that
-    which allows the grammar to compute the word."""
+    S is the start symbol, a production that begins a derivation process, which
+    allows the grammar to compute the word.
+    """
+
     def __init__(self, non_terminals, terminals, productions, init_production):
+        """Inits RegularGrammar with the attributes introduced above."""
         self.non_terminals = non_terminals
         self.terminals = terminals
         self.productions = productions
@@ -45,7 +48,14 @@ class RegularGrammar:
         return "%s\n%s\n%s\n%s" % (non_term, terminals, init_prod, grammar)
 
     def automaton_to_grammar(aut):
-        """Transform a deterministic finite automaton to a regular grammar."""
+        """Transforms a deterministic finite automaton to a regular grammar.
+
+        Attributes:
+            aut: the automaton that will be transformed.
+
+        Returns:
+            The equivalent regular grammar for the given automaton.
+        """
         non_terminals = aut.alphabet
         terminals = set()
         productions = {}
@@ -56,7 +66,8 @@ class RegularGrammar:
             productions[terminal] = set()
             terminals.add(terminal)
             for letter in aut.transitions[state]:
-                aux = ",".join(i.upper() for i in aut.transitions[state][letter])
+                aux = ",".join(i.upper()
+                        for i in aut.transitions[state][letter])
                 if aux != "":
                     productions[terminal].add(letter + aux)
                 if aut.transitions[state][letter] in aut.final_states:
@@ -66,7 +77,14 @@ class RegularGrammar:
                               productions, init_production)
 
     def grammar_to_automaton(gram):
-        """Return an deterministic finite automaton from a regular grammar."""
+        """Transforms a regular grammmar to a DFA.
+
+        Attributes:
+            gram: the grammar that will be read.
+
+        Returns:
+            The equivalent DFA for the given regular grammar.
+        """
         states, final_states = set(), set()
         alphabet = gram.non_terminals
         transitions = {}

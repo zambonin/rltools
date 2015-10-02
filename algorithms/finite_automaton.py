@@ -9,14 +9,17 @@ automata through the powerset construction method, also handling epsilon-moves.
 Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 """
 
-class FiniteAutomaton:
+class FiniteAutomaton(object):
     """A finite automaton is defined as a 5-tuple (Q, Σ, δ, q0, F) such that:
     Q is a finite set of states;
     Σ is a finite set of input symbols called the alphabet;
     δ : Q × Σ → Q (or, verbally, a transition function);
     q0 ∈ Q is a start state;
-    F ⊆ Q is a set of accept states."""
+    F ⊆ Q is a set of accept states.
+    """
+
     def __init__(self, states, alphabet, transitions, init_state, final_states):
+        """Inits FiniteAutomaton with the attributes introduced above."""
         self.states = states
         self.alphabet = alphabet
         self.transitions = transitions
@@ -25,7 +28,7 @@ class FiniteAutomaton:
         self.epsilon = "ε"
 
     def __str__(self):
-        """Pretty-print the finite automaton object attributes."""
+        """Pretty-prints the finite automaton object attributes."""
         states = "States: %s" % (', '.join(str(set(s)) for s in self.states))
         alphabet = "Alphabet: %s" % (', '.join(l for l in self.alphabet))
         transitions = "Transitions: "
@@ -38,9 +41,20 @@ class FiniteAutomaton:
                                         init_state, final)
 
     def epsilon_closure(self):
-        """Compute the epsilon-closure for each state of the input NFA."""
+        """Computes the epsilon-closure for each state of the input NFA.
+
+        Returns:
+            The set of every epsilon-closure of the NFA.
+        """
         def single_closure(state):
-            """Compute the epsilon-closure for a single state of a NFA."""
+            """Computes the epsilon-closure for a single state of a NFA.
+
+            Attributes:
+                state: the source state for the epsilon-closure computation.
+
+            Returns:
+                The epsilon-closure for said state.
+            """
             closure, old_closure = {state,}, set()
             while old_closure != closure:
                 old_closure = closure.copy()
@@ -55,7 +69,7 @@ class FiniteAutomaton:
         return {state : single_closure(state) for state in self.states}
 
     def determinize(self):
-        """Modify the input automaton to be caracterized as a DFA."""
+        """Modifies the input automaton inplace to be caracterized as a DFA."""
         opened, closed, final_states = set(), set(), set()
         new_transitions = {}
 

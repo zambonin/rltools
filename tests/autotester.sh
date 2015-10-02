@@ -1,9 +1,8 @@
 #!/usr/bin/bash
 
-# [[ $1 ]] || (echo "arg is missing" && exit)
 if [[ $1 ]]; then
-    filename=$(echo "$1" | sed 's/.in//')
-    ../rltools.py --dfa $filename.in
+    IFS='.' read -r filename ext <<< "$1"
+    ../rltools.py --dfa $filename.$ext
     ../rltools.py --atg afd-$filename.out
     ../rltools.py --gta gr-afd-$filename.out
     ../rltools.py --atg afd-gr-afd-$filename.out

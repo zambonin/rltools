@@ -1,13 +1,12 @@
 .\" Manpage for rltools.
-.\" Contact gustavo.zambonin@grad.ufsc.br to correct errors or typos.
-.TH man 7 "27 Set 2015" "1.0" "rltools man page"
+.TH man 7 "02 Oct 2015" "1.0" "rltools man page"
 .SH NAME
 .B rltools
 \- regular language tools
 .SH SYNOPSIS
 .BR rltools " \fIOPTION\fP... \fIFILE\fP..."
 .SH DESCRIPTION
-rltools is a package of resources used to manage and generate type-3 
+rltools is a package of resources used to manage and generate type-3
 formal language representations (finite automata, regular grammars and
 regular expressions).
 .SH OPTIONS
@@ -22,8 +21,9 @@ Converts a regular grammar to a determinized finite automaton.
 .BI \--atg\  file
 Converts a determinized finite automaton to a regular grammar.
 .TP
-.BI \--rta\  file
-Convers a regular expression to a determinized finite automaton.
+.BI \--rta\  regexp
+Converts a regular expression to a determinized finite automaton. Use double
+quotes on the whole string to represent special characters.
 .TP
 .BI \--atr\  file
 Converts a determinized finite automaton to a regular expression.

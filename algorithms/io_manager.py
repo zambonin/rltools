@@ -3,7 +3,8 @@
 
 """io_manager.py
 
-Tool for loading and saving objects as JSON files.
+Tool for loading and saving objects as JSON files. All handle_ methods are
+simply calculations to maintain the format of the files.
 
 Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 """
@@ -12,8 +13,10 @@ import json
 from copy import deepcopy
 from algorithms.finite_automaton import FiniteAutomaton
 from algorithms.regular_grammar import RegularGrammar
+from algorithms.regular_expression import RegularExpression
 
 def load(path):
+    """Converts a JSON file into a valid automaton or grammar."""
     def handle_states(states):
         if isinstance(states[0], list):
             return {frozenset(i) for i in states}
@@ -54,12 +57,19 @@ def load(path):
                                   data['init_production'])
 
 def save(path, header, obj):
+    """Transforms the output of the computations into a readable file."""
     def handle_transitions(old_dict):
         new = {",".join(l for l in list(i)) : old_dict[i] for i in old_dict}
         for i in new:
             for j in new[i]:
                 if isinstance(new[i][j], set):
-                    new[i][j] = list(new[i][j])
+                    new_trans = []
+                    for k in new[i][j]:
+                        if isinstance(k, frozenset):
+                            new_trans += list(k)
+                        else:
+                            new_trans += [k]
+                    new[i][j] = new_trans
                 else:
                     new[i][j] = new[i][j].split(',')
         return new
@@ -72,18 +82,24 @@ def save(path, header, obj):
                     new.append(i.split(','))
                 else:
                     new.append(list(i))
+            if sum([len(i) for i in new]) == len(new):
+                return [item for sublist in new for item in sublist]
             return new
 
         def handle_init(oldl, oldi):
             if oldi in list(oldl):
                 if isinstance(oldi, set):
-                    return list(oldi)
+                    init = list(oldi)
                 elif isinstance(oldi, str):
-                    return [oldi]
+                    init = [oldi]
             elif ",".join(oldi) in oldl:
-                return list(set(oldi))
+                init = list(set(oldi))
+            if len(init) > 1:
+                return init
+            return init[0]
 
-        return handle_list(old_list), handle_init(old_list, old_init), handle_list(old_final)
+        return handle_list(old_list), handle_init(old_list,
+                    old_init), handle_list(old_final)
 
     obj = deepcopy(obj)
     with open(path, 'w', encoding='utf8') as file_out:

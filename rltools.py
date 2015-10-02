@@ -71,14 +71,11 @@ if __name__ == '__main__':
                 print("Input must be an automaton.")
 
         elif "--rta" in sys.argv:
-            reg = load(sys.argv[2])
-            if type(reg) is RegularExpression:
-                aut = RegularExpression.regexp_to_automaton(reg)
-                outpath = re.sub(r'.in', r'.out', sys.argv[2])
-                if '/' in outpath:
-                    savepath = re.sub('/', r'/afd-', outpath)
-                else:
-                    savepath = 'afd-' + outpath
+            reg = sys.argv[2]
+            if type(reg) is str:
+                regexp = RegularExpression(reg)
+                aut = RegularExpression.regexp_to_automaton(regexp)
+                savepath = "tests/afnd-reg.out"
                 save(savepath, 'automaton', aut)
                 print("DFA saved in %s!" % savepath)
             else:
