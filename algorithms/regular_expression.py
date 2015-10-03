@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """regular_expression.py
 
@@ -11,6 +11,7 @@ Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 """
 
 from algorithms.finite_automaton import FiniteAutomaton
+
 
 class RegularExpression(object):
     """A regular expression is a sequence of characters that define a search
@@ -41,8 +42,7 @@ class RegularExpression(object):
         """
         self.expression = expression
         valid_symbols = list(map(chr, range(65, 91))) + \
-                        list(map(chr, range(97, 123))) + \
-                        [str(i) for i in range(10)]
+            list(map(chr, range(97, 123))) + [str(i) for i in range(10)]
         self.alphabet = {i for i in expression if i in valid_symbols}
 
         valid_chars = set("()|*") | self.alphabet
@@ -59,10 +59,11 @@ class RegularExpression(object):
         Returns:
             An automaton with different names for states.
         """
-        aux_aut = FiniteAutomaton({state + suffix for state in automaton.states},
-                    automaton.alphabet, {}, automaton.init_state + suffix,
-                    {frozenset([set(state).pop() + suffix])
-                        for state in automaton.final_states})
+        aux_aut = FiniteAutomaton({state+suffix for state in automaton.states},
+                                  automaton.alphabet, {},
+                                  automaton.init_state + suffix,
+                                  {frozenset([set(state).pop() + suffix])
+                                      for state in automaton.final_states})
 
         for state in automaton.transitions:
             key = frozenset([set(state).pop() + suffix])
@@ -105,12 +106,11 @@ class RegularExpression(object):
         """
         aut1 = self.diff_aut(automatons[0], "%")
         aut2 = self.diff_aut(automatons[1], "&")
-        or_aut = FiniteAutomaton({"initOr"}, set(),
-                    {
-                        frozenset(["initOr"]) : {
-                            aut1.epsilon : set()
-                        }
-                    }, "initOr", set())
+        or_aut = FiniteAutomaton({"initOr"}, set(), {
+            frozenset(["initOr"]): {
+                aut1.epsilon: set()
+            }
+            }, "initOr", set())
 
         for each in [aut1, aut2]:
             or_aut.states |= each.states
@@ -135,8 +135,8 @@ class RegularExpression(object):
         aut1 = self.diff_aut(automatons[0], "#")
         aut2 = self.diff_aut(automatons[1], "$")
         concat_aut = FiniteAutomaton(aut1.states | aut2.states,
-                               aut1.alphabet | aut2.alphabet, {},
-                               aut1.init_state, aut2.final_states)
+                                     aut1.alphabet | aut2.alphabet, {},
+                                     aut1.init_state, aut2.final_states)
         concat_aut.transitions.update(aut1.transitions)
         concat_aut.transitions.update(aut2.transitions)
 
@@ -158,17 +158,15 @@ class RegularExpression(object):
             automatons: a list of automatons to be operated on.
 
         Returns:
-            An automaton that will accept any non-negative number of repetitions
-            of its original language.
+            An automaton that will accept any non-negative number of
+            repetitions of its original language.
         """
         clsr_aut = FiniteAutomaton(
-                        {"initClsr"}, set(),
-                        {
-                            frozenset(["initClsr"]) : {
-                                automatons[0].epsilon : set()
-                            }
-                        },
-                        "initClsr", {frozenset(["initClsr"])})
+            {"initClsr"}, set(), {
+                frozenset(["initClsr"]): {
+                    automatons[0].epsilon: set()
+                }
+                }, "initClsr", {frozenset(["initClsr"])})
 
         e = clsr_aut.epsilon
         for each in automatons:
@@ -198,15 +196,15 @@ class RegularExpression(object):
         Returns:
             An automaton that accepts only one set of symbols.
         """
-        single_aut = FiniteAutomaton(
-                        {"q0" + transition, "q1" + transition}, {transition},
-                        {
-                            frozenset(["q0"+transition]) : {
-                                transition : {frozenset(["q1"+transition])}
-                            },
-                            frozenset(["q1"+transition]) : {}
-                        },
-                        "q0" + transition, {frozenset(["q1"+transition])})
+        single_aut = FiniteAutomaton({"q0" + transition, "q1" + transition},
+                                     {transition}, {
+                                     frozenset(["q0"+transition]): {
+                                         transition: {
+                                             frozenset(["q1"+transition])
+                                         }
+                                     }, frozenset(["q1"+transition]): {}},
+                                     "q0" + transition,
+                                     {frozenset(["q1"+transition])})
         return self.add_transitions(single_aut)
 
     def empty_word(self):
@@ -229,7 +227,6 @@ class RegularExpression(object):
         i = 0
         list = []
         while len(expression) != 0:
-            value = expression[i]
             if expression[i] in self.alphabet:
                 list.append(expression[i])
                 expression = expression[:i] + expression[i+1:]
@@ -325,7 +322,7 @@ class RegularExpression(object):
                 for k in automaton.transitions[i][j]:
                     if len(k) > 1:
                         to_these_states = {new_states[i] for i in
-                            automaton.transitions[i][j]}
+                                           automaton.transitions[i][j]}
                         new_aut.transitions[new_key][j] = to_these_states
                     elif isinstance(k, frozenset):
                         to_this_state = set([new_states[list(set(k))[0]]])
@@ -335,18 +332,19 @@ class RegularExpression(object):
 
     def regexp_to_automaton(self):
         """Calls the right methods in the right order."""
-        final = self.execute_operations(self.analyse_expression(self.expression))
+        final = self.execute_operations(
+            self.analyse_expression(self.expression))
         return self.rename_aut(final)
 
     def automaton_to_regexp(automaton):
         """Converts a finite automaton into a vanilla, non-reduced regular
         expression. It is an implementation of the generalized nondeterministic
         finite automaton algorithm. The general idea will be described below:
-            * add new initial state with epsilon-moves to the old initial state;
-            * add new final state with epsilon-moves from the old final states;
-            * remove one state at a time, except the ones just added,
-              recomputing all transitions that pass through that state;
-            * end the process when the only remaining states are the ones added.
+          * add new initial state with epsilon-moves to the old initial state;
+          * add new final state with epsilon-moves from the old final states;
+          * remove one state at a time, except the ones just added, recomputing
+          all transitions that pass through that state;
+          * end the process when the only remaining states are the ones added.
 
         Attributes:
             automaton: the automaton to be consumed and converted.
@@ -364,7 +362,7 @@ class RegularExpression(object):
         expr = {}
         for x in states:
             for y in states:
-                expr[x,y] = None
+                expr[x, y] = None
 
         expr['i', frozenset(init_state)] = automaton.epsilon
         for x in final_states:
@@ -385,7 +383,7 @@ class RegularExpression(object):
             for x in states:
                 for y in states:
                     if (expr[x, s] is not None and expr[s, y] is not None and
-                        x != s and y != s):
+                       x != s and y != s):
                         l1 = expr[x, s]
                         l2 = expr[s, s]
                         l3 = expr[s, y]

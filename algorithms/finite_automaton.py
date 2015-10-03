@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 """finite_automaton.py
 
@@ -8,6 +8,7 @@ automata through the powerset construction method, also handling epsilon-moves.
 
 Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 """
+
 
 class FiniteAutomaton(object):
     """A finite automaton is defined as a 5-tuple (Q, Σ, δ, q0, F) such that:
@@ -18,12 +19,12 @@ class FiniteAutomaton(object):
     F ⊆ Q is a set of accept states.
     """
 
-    def __init__(self, states, alphabet, transitions, init_state, final_states):
+    def __init__(self, states, alphabet, transitions, initstate, final_states):
         """Inits FiniteAutomaton with the attributes introduced above."""
         self.states = states
         self.alphabet = alphabet
         self.transitions = transitions
-        self.init_state = init_state
+        self.init_state = initstate
         self.final_states = final_states
         self.epsilon = "ε"
 
@@ -33,12 +34,13 @@ class FiniteAutomaton(object):
         alphabet = "Alphabet: %s" % (', '.join(l for l in self.alphabet))
         transitions = "Transitions: "
         for t in self.transitions:
-            transitions += '\n%s: %s' % (str(list(t)), str(self.transitions[t]))
+            transitions += '\n%s: %s' % (str(list(t)),
+                                         str(self.transitions[t]))
         init_state = "Initial state: %s" % self.init_state
-        final = "Final states: %s" % (', '.join(
-                                        str(set(f)) for f in self.final_states))
+        final = "Final states: %s" % (', '.join(str(set(f))
+                                      for f in self.final_states))
         return "%s\n%s\n%s\n%s\n%s" % (states, alphabet, transitions,
-                                        init_state, final)
+                                       init_state, final)
 
     def epsilon_closure(self):
         """Computes the epsilon-closure for each state of the input NFA.
@@ -55,7 +57,7 @@ class FiniteAutomaton(object):
             Returns:
                 The epsilon-closure for said state.
             """
-            closure, old_closure = {state,}, set()
+            closure, old_closure = {state, }, set()
             while old_closure != closure:
                 old_closure = closure.copy()
                 for state in old_closure:
@@ -66,7 +68,7 @@ class FiniteAutomaton(object):
                         pass
             return closure
 
-        return {state : single_closure(state) for state in self.states}
+        return {state: single_closure(state) for state in self.states}
 
     def determinize(self):
         """Modifies the input automaton inplace to be caracterized as a DFA."""
@@ -88,7 +90,7 @@ class FiniteAutomaton(object):
 
             if state not in self.transitions.keys():
                 aux_dict = {letter: set() for letter in self.alphabet}
-                for atom in state: # an atom is each part of a new state
+                for atom in state:  # an atom is each part of a new state
                     for letter in self.alphabet:
                         aux = self.transitions[frozenset([atom])][letter]
                         for dest in aux:

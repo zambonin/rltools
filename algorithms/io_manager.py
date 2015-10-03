@@ -13,7 +13,7 @@ import json
 from copy import deepcopy
 from algorithms.finite_automaton import FiniteAutomaton
 from algorithms.regular_grammar import RegularGrammar
-from algorithms.regular_expression import RegularExpression
+
 
 def load(path):
     """Converts a JSON file into a valid automaton or grammar."""
@@ -23,7 +23,7 @@ def load(path):
         return set(states)
 
     def handle_transitions(old_dict):
-        new = {frozenset([i]) : old_dict[i] for i in old_dict}
+        new = {frozenset([i]): old_dict[i] for i in old_dict}
         for i in new:
             for j in new[i]:
                 new[i][j] = set(new[i][j])
@@ -52,14 +52,15 @@ def load(path):
         if header == 'grammar':
             return RegularGrammar(set(data['non_terminals']),
                                   set(data['terminals']),
-                                  {i : set(data['productions'][i])
-                                            for i in data['productions']},
+                                  {i: set(data['productions'][i])
+                                      for i in data['productions']},
                                   data['init_production'])
+
 
 def save(path, header, obj):
     """Transforms the output of the computations into a readable file."""
     def handle_transitions(old_dict):
-        new = {",".join(l for l in list(i)) : old_dict[i] for i in old_dict}
+        new = {",".join(l for l in list(i)): old_dict[i] for i in old_dict}
         for i in new:
             for j in new[i]:
                 if isinstance(new[i][j], set):
@@ -98,34 +99,34 @@ def save(path, header, obj):
                 return init
             return init[0]
 
-        return handle_list(old_list), handle_init(old_list,
-                    old_init), handle_list(old_final)
+        return (handle_list(old_list), handle_init(old_list, old_init),
+                handle_list(old_final))
 
     obj = deepcopy(obj)
     with open(path, 'w', encoding='utf8') as file_out:
         if header == 'automaton':
             t = handle_states(obj.states, obj.init_state, obj.final_states)
             json.dump({
-                        'type' : 'automaton',
-                        'states' : t[0],
-                        'alphabet' : list(obj.alphabet),
-                        'transitions' : handle_transitions(obj.transitions),
-                        'init_state' : t[1],
-                        'final_states' : t[2],
-                    }, file_out, indent=4, ensure_ascii=False)
+                      'type': 'automaton',
+                      'states': t[0],
+                      'alphabet': list(obj.alphabet),
+                      'transitions': handle_transitions(obj.transitions),
+                      'init_state': t[1],
+                      'final_states': t[2],
+                      }, file_out, indent=4, ensure_ascii=False)
 
         if header == 'grammar':
             json.dump({
-                        'type' : 'grammar',
-                        'non_terminals' : list(obj.non_terminals),
-                        'terminals' : list(obj.terminals),
-                        'productions' : {i : list(obj.productions[i])
-                                            for i in obj.productions},
-                        'init_production' : obj.init_production,
+                      'type': 'grammar',
+                      'non_terminals': list(obj.non_terminals),
+                      'terminals': list(obj.terminals),
+                      'productions': {i: list(obj.productions[i])
+                                      for i in obj.productions},
+                      'init_production': obj.init_production,
                       }, file_out, indent=4, ensure_ascii=False)
 
         if header == 'regexp':
             json.dump({
-                      'type' : 'regexp',
-                      'expression' : obj,
+                      'type': 'regexp',
+                      'expression': obj,
                       }, file_out, indent=4, ensure_ascii=False)

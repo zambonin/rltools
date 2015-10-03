@@ -18,6 +18,7 @@ from algorithms.regular_expression import RegularExpression
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("Basic usage: man ./rltools")
+        raise SystemExit
 
     possible_commands = ["--dfa", "--gta", "--atg", "--rta", "--atr"]
 

@@ -10,6 +10,7 @@ if [[ $1 ]]; then
     IFS='.' read -r filename ext <<< "$1"
     ../rltools.py --dfa "$filename"."$ext"
     ../rltools.py --atg "afd-$filename.out"
+    ../rltools.py --atr "afd-$filename.out"
 
     echo "$filename" | grep -q reg
     if [ $? -ne 0 ] ; then

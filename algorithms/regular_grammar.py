@@ -12,6 +12,7 @@ Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 
 from algorithms.finite_automaton import FiniteAutomaton
 
+
 class RegularGrammar(object):
     """A regular grammar is defined as a 4-tuple (N, Σ, P, S) such that:
     N is a list of non-terminals. These are variables replaced by terminals
@@ -65,7 +66,7 @@ class RegularGrammar(object):
             terminals.add(terminal)
             for letter in aut.transitions[state]:
                 aux = ",".join(i.upper()
-                        for i in aut.transitions[state][letter])
+                               for i in aut.transitions[state][letter])
                 if aux != "":
                     productions[terminal].add(letter + aux)
                 if aut.transitions[state][letter] in aut.final_states:
