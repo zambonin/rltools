@@ -57,13 +57,13 @@ class RegularGrammar(object):
         Returns:
             The equivalent regular grammar for the given automaton.
         """
-        terminals = set()
+        non_terminals = set()
         productions = {}
 
         for state in aut.transitions:
             terminal = ",".join(part.upper() for part in state)
             productions[terminal] = set()
-            terminals.add(terminal)
+            non_terminals.add(terminal)
             for letter in aut.transitions[state]:
                 aux = ",".join(i.upper()
                                for i in aut.transitions[state][letter])
@@ -72,7 +72,7 @@ class RegularGrammar(object):
                 if aut.transitions[state][letter] in aut.final_states:
                     productions[terminal].add(letter)
 
-        return RegularGrammar(aut.alphabet, terminals, productions,
+        return RegularGrammar(non_terminals, aut.alphabet, productions,
                               "".join(part.upper() for part in aut.init_state))
 
     def grammar_to_automaton(gram):
@@ -84,7 +84,7 @@ class RegularGrammar(object):
         Returns:
             The equivalent DFA for the given regular grammar.
         """
-        alphabet = gram.non_terminals
+        alphabet = gram.terminals
         states, final_states = set(), set()
         transitions = {}
 
