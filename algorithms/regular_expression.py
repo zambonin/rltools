@@ -71,6 +71,8 @@ class RegularExpression(object):
             for symbol in automaton.transitions[state]:
                 aux_aut.transitions[key][symbol] = set()
                 for element in automaton.transitions[state][symbol]:
+                    if isinstance(element, str):
+                        element = [element]
                     aux_aut.transitions[key][symbol].add(
                         frozenset([set(element).pop() + suffix]))
 
