@@ -124,14 +124,6 @@ class FiniteAutomaton(object):
 
     def minimize(self):
         self.determinize()
-        """for state in self.transitions:
-            for letter in self.transitions[state]:
-                if len(self.transitions[state][letter]) > 1 or letter == self.epsilon:
-                    self.determinize()
-                    break
-                else:
-                    continue
-                break"""
 
         def belongs_to(self, state):
             for lst in classes:
