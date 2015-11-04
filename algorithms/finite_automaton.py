@@ -150,7 +150,8 @@ class FiniteAutomaton(object):
 
         classes = list()
         classes.append(list(self.final_states))
-        classes.append(list(self.states - self.final_states))
+        if len(list(self.states - self.final_states)) > 0:
+            classes.append(list(self.states - self.final_states))
 
         old_classes = list()
 
@@ -214,4 +215,42 @@ def test():
      b.alphabet.add("b")
 
      b.minimize()
+
+    #testing
+     a = FiniteAutomaton(set(), set(), {}, "0", set())
+     a.states.add("S")
+     a.states.add("A")
+     a.states.add("B")
+     a.states.add("C")
+     a.states.add("D")
+
+     a.init_state = "S"
+     a.final_states.add(frozenset(["S"]))
+     a.final_states.add(frozenset(["C"]))
+     a.final_states.add(frozenset(["D"]))
+
+     a.transitions[frozenset(["S"])] = {}
+     a.transitions[frozenset(["S"])]["a"] = {"B", "C"}
+     a.transitions[frozenset(["S"])]["b"] = {"A", "D"}
+
+     a.transitions[frozenset(["A"])] = {}
+     a.transitions[frozenset(["A"])]["a"] = {"B"}
+     a.transitions[frozenset(["A"])]["b"] = {"A"}
+
+     a.transitions[frozenset(["B"])] = {}
+     a.transitions[frozenset(["B"])]["a"] = {"A"}
+     a.transitions[frozenset(["B"])]["b"] = {"B"}
+
+     a.transitions[frozenset(["C"])] = {}
+     a.transitions[frozenset(["C"])]["a"] = {"C"}
+     a.transitions[frozenset(["C"])]["b"] = {"D"}
+
+     a.transitions[frozenset(["D"])] = {}
+     a.transitions[frozenset(["D"])]["a"] = {"D"}
+     a.transitions[frozenset(["D"])]["b"] = {"C"}
+
+     a.alphabet.add("a")
+     a.alphabet.add("b")
+
+     a.minimize()
 test()
