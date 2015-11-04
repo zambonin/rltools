@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from copy import deepcopy
 
 """finite_automaton.py
 
@@ -132,9 +133,9 @@ class FiniteAutomaton(object):
                     continue
                 break"""
 
-        def belongs_to(self, state, number_list):
+        def belongs_to(self, state):
             for lst in classes:
-                if classes.index(lst) != number_list and len(lst) > 1:
+                if len(lst) > 1 or lst not in old_classes:
                     for letter in self.transitions[lst[0]]:
                         both = False
                         arrival_list = list()
@@ -163,12 +164,15 @@ class FiniteAutomaton(object):
 
 
         while classes != old_classes:
-            old_classes = classes
+            old_classes = deepcopy(classes)
             for classs in classes:
                 if len(classs) > 1:
-                    for i in range(1,len(classs)-1):
-                        state = classs.pop(i)
-                        class_which_belongs = belongs_to(self, state, i)
+                    aux_c = classs[:]
+                    head_state = aux_c.pop(0)
+                    for state in aux_c:
+                        index = classs.index(state)
+                        classs.pop(index)
+                        class_which_belongs = belongs_to(self, state)
                         if class_which_belongs in classes:
                             class_which_belongs.append(state)
                         else:
@@ -181,7 +185,7 @@ class FiniteAutomaton(object):
 
 
 def test():
-     b = Automaton(set(), set(), {}, "0", set())
+     b = FiniteAutomaton(set(), set(), {}, "0", set())
      b.states.add("S")
      b.states.add("A")
      b.states.add("B")
