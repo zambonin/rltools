@@ -12,14 +12,14 @@ class Tokenizer(object):
         self.errors = list()
 
 
-    def analyse(self):
+    def analyze(self):
         file = open(self.input_file, 'r')
         line_number = 0
         while True:
             line = file.readline()
             if not line: break
             line_number += 1
-            words = line.split(" ")
+            words = line.strip().split(" ")
             for word in words:
                 if word != "":
                     actual_state = frozenset(self.automaton.init_state)
@@ -31,12 +31,15 @@ class Tokenizer(object):
                         except KeyError:
                             actual_state = set()
                     if actual_state in self.automaton.final_states:
-                        self.tokens.append((word, actual_state))
+                        aux = ""
+                        for piece in set(actual_state):
+                            aux += piece
+                        self.tokens.append((word, aux))
                     else:
                         self.errors.append("ERROR: The word "+word+" in line "+str(line_number)+" cannot be recognized")
-
-        print(self.tokens)
-        print(self.errors)
+        file.close()
+        print("Tokens", self.tokens)
+        print("Errors", self.errors)
 
 
 
@@ -72,6 +75,6 @@ def test():
     b.alphabet.add("b")
 
     a = Tokenizer(b, "pasqual.pac")
-    a.analyse()
+    a.analyze()
 
 test()
