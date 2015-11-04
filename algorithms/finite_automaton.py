@@ -120,3 +120,102 @@ class FiniteAutomaton(object):
         for state in new_transitions:
             self.states.add(state)
         self.transitions = new_transitions
+
+    def minimize(self):
+        self.determinize()
+        """for state in self.transitions:
+            for letter in self.transitions[state]:
+                if len(self.transitions[state][letter]) > 1 or letter == self.epsilon:
+                    self.determinize()
+                    break
+                else:
+                    continue
+                break"""
+
+        def belongs_to(self, state, number_list):
+            for lst in classes:
+                if classes.index(lst) != number_list and len(lst) > 1:
+                    for letter in self.transitions[lst[0]]:
+                        both = False
+                        arrival_list = list()
+                        arrival_list2 = list()
+                        for old_list in old_classes:
+                            head = lst.pop(0)
+                            lst.insert(0, head)
+                            if frozenset(self.transitions[head][letter]) in old_list:
+                                arrival_list = old_list
+                            if frozenset(self.transitions[state][letter]) in old_list:
+                                arrival_list2 = old_list
+
+                        if arrival_list == arrival_list2:
+                            both = True
+                        if not both:
+                            break
+                    if both:
+                        return lst
+            return [frozenset(state)]
+
+        classes = list()
+        classes.append(list(self.final_states))
+        classes.append(list(self.states - self.final_states))
+
+        old_classes = list()
+
+
+        while classes != old_classes:
+            old_classes = classes
+            for classs in classes:
+                if len(classs) > 1:
+                    for i in range(1,len(classs)-1):
+                        state = classs.pop(i)
+                        class_which_belongs = belongs_to(self, state, i)
+                        if class_which_belongs in classes:
+                            class_which_belongs.append(state)
+                        else:
+                            classes.append(class_which_belongs)
+
+        print (classes)
+
+
+
+
+
+def test():
+     b = Automaton(set(), set(), {}, "0", set())
+     b.states.add("S")
+     b.states.add("A")
+     b.states.add("B")
+     b.states.add("C")
+     b.states.add("D")
+
+     b.init_state = "S"
+     b.final_states.add(frozenset(["A"]))
+     b.final_states.add(frozenset(["B"]))
+     b.final_states.add(frozenset(["C"]))
+     b.final_states.add(frozenset(["D"]))
+
+     b.transitions[frozenset(["S"])] = {}
+     b.transitions[frozenset(["S"])]["a"] = {"A", "C", "D"}
+     b.transitions[frozenset(["S"])]["b"] = {"A", "B", "C"}
+
+     b.transitions[frozenset(["A"])] = {}
+     b.transitions[frozenset(["A"])]["a"] = set()
+     b.transitions[frozenset(["A"])]["b"] = {"A", "B"}
+
+     b.transitions[frozenset(["B"])] = {}
+     b.transitions[frozenset(["B"])]["a"] = {"A"}
+     b.transitions[frozenset(["B"])]["b"] = {"B"}
+
+     b.transitions[frozenset(["C"])] = {}
+     b.transitions[frozenset(["C"])]["a"] = {"C","D"}
+     b.transitions[frozenset(["C"])]["b"] = set()
+
+     b.transitions[frozenset(["D"])] = {}
+     b.transitions[frozenset(["D"])]["a"] = {"D"}
+     b.transitions[frozenset(["D"])]["b"] = {"C"}
+
+     b.alphabet.add("a")
+     b.alphabet.add("b")
+
+     b.minimize()
+test()
