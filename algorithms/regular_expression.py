@@ -43,8 +43,10 @@ class RegularExpression(object):
         self.expression = expression
         valid_symbols = list(map(chr, range(65, 91))) + \
             list(map(chr, range(97, 123))) + [str(i) for i in range(10)]
+        #just as a test
+        valid_symbols.append("[")
+        valid_symbols.append("]")
         self.alphabet = {i for i in expression if i in valid_symbols}
-
         valid_chars = set("()|*") | self.alphabet
         if set(expression) - valid_chars != set():
             raise ValueError
@@ -308,13 +310,13 @@ class RegularExpression(object):
             new_states[i] = 'q' + str(j)
 
         for i in new_states:
-            state = set([new_states[i]])
-            new_aut.states.add(frozenset(state))
+            state = new_states[i]
+            new_aut.states.add(state)
             if frozenset([i]) in automaton.final_states:
                 final_state = set([new_states[i]])
                 new_aut.final_states.add(frozenset(final_state))
             if i == automaton.init_state:
-                new_aut.init_state = set([new_states[i]])
+                new_aut.init_state = new_states[i]
 
         for i in automaton.transitions:
             new_key = frozenset([new_states[list(set(i))[0]]])
@@ -404,3 +406,4 @@ class RegularExpression(object):
             states.remove(s)
 
         return expr['i', 'f']
+
