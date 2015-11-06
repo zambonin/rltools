@@ -128,6 +128,45 @@ class FiniteAutomaton(object):
     def minimize(self):
         self.determinize()
 
+        def assembler(self):
+            i = 0
+            new_states = set()
+            mapping = {}
+            new_init = ""
+            new_transitions = {}
+            new_finals = set()
+            for classs in classes:
+                i += 1
+                new_states.add("q"+str(i))
+                new_transitions[frozenset(["q"+str(i)])] = {}
+                mapping[frozenset(classs)] = "q"+str(i)
+            for classs in classes:
+                for state in classs:
+                    aux_class = ""
+                    for classss in classes:
+                        if state in classs:
+                            aux_class = classss
+                            break
+                    if state in self.init_state:
+                        new_init = mapping[frozenset(aux_class)]
+                    if frozenset([state]) in self.final_states:
+                        new_finals.add(frozenset([mapping[frozenset(aux_class)]]))
+                    for letter in self.transitions[state]:
+                        new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter] = set()
+                        for piece in self.transitions[state][letter]:
+                                another_aux_class = ""
+                                for another_class in classes:
+                                    if piece in another_class:
+                                        another_aux_class = another_class
+                                        break
+                                new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter].add(mapping[frozenset(another_aux_class)])
+            self.transitions = new_transitions
+            self.init_state = new_init
+            self.final_states = new_finals
+            self.states = new_states
+
+
+
         def belongs_to(self, state):
             for lst in classes:
                 if len(lst) > 1 or lst not in old_classes:
@@ -174,7 +213,7 @@ class FiniteAutomaton(object):
                         else:
                             classes.append(class_which_belongs)
 
-        return classes
+        assembler(self)
         #TODO this return above is wrong, we need to create the new automaton using this classes
 
 
