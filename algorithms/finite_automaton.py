@@ -147,9 +147,9 @@ class FiniteAutomaton(object):
                         if state in classs:
                             aux_class = classss
                             break
-                    if state in self.init_state:
-                        new_init = mapping[frozenset(aux_class)]
-                    if frozenset([state]) in self.final_states:
+                    if set(state).pop() in self.init_state:
+                        new_init = str(mapping[frozenset(aux_class)])
+                    if state in self.final_states:
                         new_finals.add(frozenset([mapping[frozenset(aux_class)]]))
                     for letter in self.transitions[state]:
                         new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter] = set()
@@ -159,11 +159,15 @@ class FiniteAutomaton(object):
                                     if piece in another_class:
                                         another_aux_class = another_class
                                         break
-                                new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter].add(mapping[frozenset(another_aux_class)])
+                                try:
+                                    new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter].add(mapping[frozenset(another_aux_class)])
+                                except KeyError:
+                                    pass
             self.transitions = new_transitions
             self.init_state = new_init
             self.final_states = new_finals
             self.states = new_states
+
 
 
 
