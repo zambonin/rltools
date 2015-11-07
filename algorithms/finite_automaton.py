@@ -77,7 +77,10 @@ class FiniteAutomaton(object):
         new_transitions = {}
 
         epsilon_closure = self.epsilon_closure()
-        init_closure = epsilon_closure[self.init_state]
+        try:
+            init_closure = epsilon_closure[frozenset([self.init_state])]
+        except KeyError:
+            init_closure = epsilon_closure[self.init_state]
         new_init_state = init_closure
         opened.add(frozenset(init_closure))
 
@@ -130,6 +133,53 @@ class FiniteAutomaton(object):
     def minimize(self):
         self.determinize()
 
+        def assembler(self):
+            i = 0
+            new_states = set()
+            mapping = {}
+            new_init = ""
+            new_transitions = {}
+            new_finals = set()
+            for classs in classes:
+                i += 1
+                new_states.add("q"+str(i))
+                new_transitions[frozenset(["q"+str(i)])] = {}
+                mapping[frozenset(classs)] = "q"+str(i)
+            for classs in classes:
+                for state in classs:
+                    aux_class = ""
+                    for classss in classes:
+                        if state in classss:
+                            aux_class = classss
+                            break
+                    if set(state).pop() in self.init_state:
+                        new_init = str(mapping[frozenset(aux_class)])
+                    if state in self.final_states:
+                        new_finals.add(frozenset([mapping[frozenset(aux_class)]]))
+                    for letter in self.transitions[state]:
+                        try:
+                            new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter]
+                            break
+                        except KeyError:
+                            new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter] = set()
+                        for piece in self.transitions[state][letter]:
+                                another_aux_class = ""
+                                for another_class in classes:
+                                    if frozenset([piece]) in another_class:
+                                        another_aux_class = another_class
+                                        break
+                                try:
+                                    new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter].add(mapping[frozenset(another_aux_class)])
+                                except KeyError:
+                                    pass
+            self.transitions = new_transitions
+            self.init_state = new_init
+            self.final_states = new_finals
+            self.states = new_states
+
+
+
+
         def belongs_to(self, state):
             for lst in classes:
                 if len(lst) > 1 or lst not in old_classes:
@@ -176,86 +226,6 @@ class FiniteAutomaton(object):
                         else:
                             classes.append(class_which_belongs)
 
-        print (classes)
+        assembler(self)
+        #TODO this return above is wrong, we need to create the new automaton using this classes
 
-
-
-
-
-def test():
-     b = FiniteAutomaton(set(), set(), {}, "0", set())
-     b.states.add("S")
-     b.states.add("A")
-     b.states.add("B")
-     b.states.add("C")
-     b.states.add("D")
-
-     b.init_state = "S"
-     b.final_states.add(frozenset(["A"]))
-     b.final_states.add(frozenset(["B"]))
-     b.final_states.add(frozenset(["C"]))
-     b.final_states.add(frozenset(["D"]))
-
-     b.transitions[frozenset(["S"])] = {}
-     b.transitions[frozenset(["S"])]["a"] = {"A", "C", "D"}
-     b.transitions[frozenset(["S"])]["b"] = {"A", "B", "C"}
-
-     b.transitions[frozenset(["A"])] = {}
-     b.transitions[frozenset(["A"])]["a"] = set()
-     b.transitions[frozenset(["A"])]["b"] = {"A", "B"}
-
-     b.transitions[frozenset(["B"])] = {}
-     b.transitions[frozenset(["B"])]["a"] = {"A"}
-     b.transitions[frozenset(["B"])]["b"] = {"B"}
-
-     b.transitions[frozenset(["C"])] = {}
-     b.transitions[frozenset(["C"])]["a"] = {"C","D"}
-     b.transitions[frozenset(["C"])]["b"] = set()
-
-     b.transitions[frozenset(["D"])] = {}
-     b.transitions[frozenset(["D"])]["a"] = {"D"}
-     b.transitions[frozenset(["D"])]["b"] = {"C"}
-
-     b.alphabet.add("a")
-     b.alphabet.add("b")
-
-     b.minimize()
-
-    #testing
-     a = FiniteAutomaton(set(), set(), {}, "0", set())
-     a.states.add("S")
-     a.states.add("A")
-     a.states.add("B")
-     a.states.add("C")
-     a.states.add("D")
-
-     a.init_state = "S"
-     a.final_states.add(frozenset(["S"]))
-     a.final_states.add(frozenset(["C"]))
-     a.final_states.add(frozenset(["D"]))
-
-     a.transitions[frozenset(["S"])] = {}
-     a.transitions[frozenset(["S"])]["a"] = {"B", "C"}
-     a.transitions[frozenset(["S"])]["b"] = {"A", "D"}
-
-     a.transitions[frozenset(["A"])] = {}
-     a.transitions[frozenset(["A"])]["a"] = {"B"}
-     a.transitions[frozenset(["A"])]["b"] = {"A"}
-
-     a.transitions[frozenset(["B"])] = {}
-     a.transitions[frozenset(["B"])]["a"] = {"A"}
-     a.transitions[frozenset(["B"])]["b"] = {"B"}
-
-     a.transitions[frozenset(["C"])] = {}
-     a.transitions[frozenset(["C"])]["a"] = {"C"}
-     a.transitions[frozenset(["C"])]["b"] = {"D"}
-
-     a.transitions[frozenset(["D"])] = {}
-     a.transitions[frozenset(["D"])]["a"] = {"D"}
-     a.transitions[frozenset(["D"])]["b"] = {"C"}
-
-     a.alphabet.add("a")
-     a.alphabet.add("b")
-
-     a.minimize()
-test()
