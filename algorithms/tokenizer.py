@@ -36,7 +36,7 @@ class Tokenizer(object):
                 if not line:
                     break
                 line_number += 1
-                curr_state, word = frozenset(self.automaton.init_state), ""
+                curr_state, word = frozenset([self.automaton.init_state]), ""
                 for letter in line:
                     if ((curr_state == frozenset() or curr_state == set())
                        and letter not in separators):
