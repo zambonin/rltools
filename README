@@ -2,7 +2,7 @@ UFSC/CTC/INE
 INE5421 - Formal Languages and Compilers (2015/2)
 Gustavo Zambonin (13104307) & Matheus Ben-Hur de Melo Leite (13100765)
 
-Pratice I - Algorithms for Manipulation of Regular Languages
+Practice I - Algorithms for Manipulation of Regular Languages
 
 The language chosen to code these algorithms was Python, for it is easier to
 manipulate object types dynamically. Almost all the information related to the
