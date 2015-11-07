@@ -19,7 +19,7 @@ class Tokenizer(object):
             if not line: break
             line_number += 1
             words = line
-            actual_state = frozenset(self.automaton.init_state)
+            actual_state = frozenset([self.automaton.init_state])
             word = ""
             for letter in words:
                 if (actual_state == frozenset() or actual_state == set()) and letter != "\n":
@@ -51,37 +51,43 @@ class Tokenizer(object):
 
 def test():
     b = FiniteAutomaton(set(), set(), {}, "0", set())
-    b.states.add("S")
-    b.states.add("A")
-    b.states.add("B")
-    b.states.add("C")
-    b.states.add("D")
+    b.states.add("q0")
+    b.states.add("q1")
+    b.states.add("q2")
+    b.states.add("q3")
+    b.states.add("q4")
 
-    b.init_state = "S"
-    b.final_states.add(frozenset(["C"]))
-    b.final_states.add(frozenset(["D"]))
+    b.init_state = "q0"
+    b.final_states.add(frozenset(["q4"]))
 
-    b.transitions[frozenset(["S"])] = {}
-    b.transitions[frozenset(["S"])]["a"] = {"A"}
-    b.transitions[frozenset(["S"])]["b"] = set()
-    b.transitions[frozenset(["A"])] = {}
-    b.transitions[frozenset(["A"])]["a"] = set()
-    b.transitions[frozenset(["A"])]["b"] = {"B"}
+    b.transitions[frozenset(["q0"])] = {}
+    b.transitions[frozenset(["q0"])]["e"] = {"q1"}
+    b.transitions[frozenset(["q0"])]["l"] = set()
+    b.transitions[frozenset(["q0"])]["s"] = set()
 
-    b.transitions[frozenset(["B"])] = {}
-    b.transitions[frozenset(["B"])]["a"] = {"C"}
-    b.transitions[frozenset(["B"])]["b"] = {"B"}
+    b.transitions[frozenset(["q1"])] = {}
+    b.transitions[frozenset(["q1"])]["e"] = set()
+    b.transitions[frozenset(["q1"])]["l"] = {"q2"}
+    b.transitions[frozenset(["q1"])]["s"] = set()
 
-    b.transitions[frozenset(["C"])] = {}
-    b.transitions[frozenset(["C"])]["a"] = {"D"}
-    b.transitions[frozenset(["C"])]["b"] = set()
+    b.transitions[frozenset(["q2"])] = {}
+    b.transitions[frozenset(["q2"])]["e"] = set()
+    b.transitions[frozenset(["q2"])]["l"] = set()
+    b.transitions[frozenset(["q2"])]["s"] = {"q3"}
 
-    b.transitions[frozenset(["D"])] = {}
-    b.transitions[frozenset(["D"])]["a"] = set()
-    b.transitions[frozenset(["D"])]["b"] = set()
+    b.transitions[frozenset(["q3"])] = {}
+    b.transitions[frozenset(["q3"])]["e"] = {"q4"}
+    b.transitions[frozenset(["q3"])]["l"] = set()
+    b.transitions[frozenset(["q3"])]["s"] = set()
 
-    b.alphabet.add("a")
-    b.alphabet.add("b")
+    b.transitions[frozenset(["q4"])] = {}
+    b.transitions[frozenset(["q4"])]["e"] = set()
+    b.transitions[frozenset(["q4"])]["l"] = set()
+    b.transitions[frozenset(["q4"])]["s"] = set()
+
+    b.alphabet.add("e")
+    b.alphabet.add("l")
+    b.alphabet.add("s")
 
     a = Tokenizer(b, "pasqual.pac")
     a.analyze()
