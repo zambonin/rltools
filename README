@@ -33,7 +33,8 @@ even if those are empty.
 The regular expression parser accepts only unary letters alphabets. Hence, an
 expression of the form "(q0|q1*)" will be parsed with the set {'q', '0', '1'}
 as its symbols, and won't match a possible desired {'q0', 'q1'} set. Parenthesis
-should be used whenever possible when describing regular expressions.
+should be used whenever possible when describing regular expressions. The code
+itself should be executed using Python 3.x.
 
                                                                     02/10/2015
 
