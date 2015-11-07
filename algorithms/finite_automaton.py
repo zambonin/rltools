@@ -85,7 +85,12 @@ class FiniteAutomaton(object):
             state = opened.pop()
             closed.add(state)
             try:
-                new_transitions[state] = self.transitions[state]
+                new_transition = {}
+                for letter in self.transitions[state]:
+                    new_transition[letter] = set()
+                    for atom in self.transitions[state][letter]:
+                        new_transition[letter] |= epsilon_closure[atom]
+                new_transitions[state] = new_transition
             except KeyError:
                 pass
 
