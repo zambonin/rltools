@@ -81,14 +81,19 @@ class FiniteAutomaton(object):
             init_closure = epsilon_closure[frozenset([self.init_state])]
         except KeyError:
             init_closure = epsilon_closure[self.init_state]
-        new_init_state = next(iter(init_closure))
+        new_init_state = init_closure
         opened.add(frozenset(init_closure))
 
         while opened:
             state = opened.pop()
             closed.add(state)
             try:
-                new_transitions[state] = self.transitions[state]
+                new_transition = {}
+                for letter in self.transitions[state]:
+                    new_transition[letter] = set()
+                    for atom in self.transitions[state][letter]:
+                        new_transition[letter] |= epsilon_closure[atom]
+                new_transitions[state] = new_transition
             except KeyError:
                 pass
 
@@ -224,125 +229,3 @@ class FiniteAutomaton(object):
         assembler(self)
         #TODO this return above is wrong, we need to create the new automaton using this classes
 
-
-
-
-def test():
-    #  b = FiniteAutomaton(set(), set(), {}, "0", set())
-    #  b.states.add("S")
-    #  b.states.add("A")
-    #  b.states.add("B")
-    #  b.states.add("C")
-    #  b.states.add("D")
-
-    #  b.init_state = "S"
-    #  b.final_states.add(frozenset(["A"]))
-    #  b.final_states.add(frozenset(["B"]))
-    #  b.final_states.add(frozenset(["C"]))
-    #  b.final_states.add(frozenset(["D"]))
-
-    #  b.transitions[frozenset(["S"])] = {}
-    #  b.transitions[frozenset(["S"])]["a"] = {"A", "C", "D"}
-    #  b.transitions[frozenset(["S"])]["b"] = {"A", "B", "C"}
-
-    #  b.transitions[frozenset(["A"])] = {}
-    #  b.transitions[frozenset(["A"])]["a"] = set()
-    #  b.transitions[frozenset(["A"])]["b"] = {"A", "B"}
-
-    #  b.transitions[frozenset(["B"])] = {}
-    #  b.transitions[frozenset(["B"])]["a"] = {"A"}
-    #  b.transitions[frozenset(["B"])]["b"] = {"B"}
-
-    #  b.transitions[frozenset(["C"])] = {}
-    #  b.transitions[frozenset(["C"])]["a"] = {"C","D"}
-    #  b.transitions[frozenset(["C"])]["b"] = set()
-
-    #  b.transitions[frozenset(["D"])] = {}
-    #  b.transitions[frozenset(["D"])]["a"] = {"D"}
-    #  b.transitions[frozenset(["D"])]["b"] = {"C"}
-
-    #  b.alphabet.add("a")
-    #  b.alphabet.add("b")
-
-    #  b.minimize()
-
-    # #testing
-    #  a = FiniteAutomaton(set(), set(), {}, "0", set())
-    #  a.states.add("S")
-    #  a.states.add("A")
-    #  a.states.add("B")
-    #  a.states.add("C")
-    #  a.states.add("D")
-
-    #  a.init_state = "S"
-    #  a.final_states.add(frozenset(["S"]))
-    #  a.final_states.add(frozenset(["C"]))
-    #  a.final_states.add(frozenset(["D"]))
-
-    #  a.transitions[frozenset(["S"])] = {}
-    #  a.transitions[frozenset(["S"])]["a"] = {"B", "C"}
-    #  a.transitions[frozenset(["S"])]["b"] = {"A", "D"}
-
-    #  a.transitions[frozenset(["A"])] = {}
-    #  a.transitions[frozenset(["A"])]["a"] = {"B"}
-    #  a.transitions[frozenset(["A"])]["b"] = {"A"}
-
-    #  a.transitions[frozenset(["B"])] = {}
-    #  a.transitions[frozenset(["B"])]["a"] = {"A"}
-    #  a.transitions[frozenset(["B"])]["b"] = {"B"}
-
-    #  a.transitions[frozenset(["C"])] = {}
-    #  a.transitions[frozenset(["C"])]["a"] = {"C"}
-    #  a.transitions[frozenset(["C"])]["b"] = {"D"}
-
-    #  a.transitions[frozenset(["D"])] = {}
-    #  a.transitions[frozenset(["D"])]["a"] = {"D"}
-    #  a.transitions[frozenset(["D"])]["b"] = {"C"}
-
-    #  a.alphabet.add("a")
-    #  a.alphabet.add("b")
-
-    #  a.minimize()
-
-    c = FiniteAutomaton({"S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7"},
-        {'a', 'b'}, {
-            frozenset(["S0"]) : {
-                'a': {"S1"},
-                'b': {"S4"},
-            },
-            frozenset(["S1"]) : {
-                'a': {'S5'},
-                'b': {'S2'},
-            },
-            frozenset(["S2"]) : {
-                'a': {'S3'},
-                'b': {'S6'},
-            },
-            frozenset(["S3"]) : {
-                'a': {'S3'},
-                'b': {'S3'},
-            },
-            frozenset(["S4"]) : {
-                'a': {'S1'},
-                'b': {'S4'},
-            },
-            frozenset(["S5"]) : {
-                'a': {'S1'},
-                'b': {'S4'},
-            },
-            frozenset(["S6"]) : {
-                'a': {'S3'},
-                'b': {'S7'},
-            },
-            frozenset(["S7"]) : {
-                'a': {'S3'},
-                'b': {'S6'},
-            }}, "S0", {frozenset(['S2']), frozenset(['S7'])})
-
-    c.minimize()
-    print("transitions: ", c.transitions)
-    print("initial: ", c.init_state)
-    print("finals: ", c.final_states)
-    print("states: ", c.states)
-
-test()
