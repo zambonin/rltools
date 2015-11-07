@@ -3,17 +3,17 @@
 
 """rltools.py
 
-The command-line interface for this program.
+The command-line interface for the program.
 
 Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 """
 
 import re
 import sys
-from algorithms.io_manager import load, save
 from algorithms.finite_automaton import FiniteAutomaton
-from algorithms.regular_grammar import RegularGrammar
+from algorithms.io_manager import load, save
 from algorithms.regular_expression import RegularExpression
+from algorithms.regular_grammar import RegularGrammar
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:

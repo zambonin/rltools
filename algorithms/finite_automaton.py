@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from copy import deepcopy
 
 """finite_automaton.py
 
@@ -9,6 +8,8 @@ automata through the powerset construction method, also handling epsilon-moves.
 
 Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 """
+
+from copy import deepcopy
 
 
 class FiniteAutomaton(object):
@@ -155,7 +156,6 @@ class FiniteAutomaton(object):
 
         old_classes = list()
 
-
         while classes != old_classes:
             old_classes = deepcopy(classes)
             for classs in classes:
@@ -171,86 +171,82 @@ class FiniteAutomaton(object):
                         else:
                             classes.append(class_which_belongs)
 
-        print (classes)
-
-
-
-
 
 def test():
-     b = FiniteAutomaton(set(), set(), {}, "0", set())
-     b.states.add("S")
-     b.states.add("A")
-     b.states.add("B")
-     b.states.add("C")
-     b.states.add("D")
+    b = FiniteAutomaton(set(), set(), {}, "0", set())
+    b.states.add("S")
+    b.states.add("A")
+    b.states.add("B")
+    b.states.add("C")
+    b.states.add("D")
 
-     b.init_state = "S"
-     b.final_states.add(frozenset(["A"]))
-     b.final_states.add(frozenset(["B"]))
-     b.final_states.add(frozenset(["C"]))
-     b.final_states.add(frozenset(["D"]))
+    b.init_state = "S"
+    b.final_states.add(frozenset(["A"]))
+    b.final_states.add(frozenset(["B"]))
+    b.final_states.add(frozenset(["C"]))
+    b.final_states.add(frozenset(["D"]))
 
-     b.transitions[frozenset(["S"])] = {}
-     b.transitions[frozenset(["S"])]["a"] = {"A", "C", "D"}
-     b.transitions[frozenset(["S"])]["b"] = {"A", "B", "C"}
+    b.transitions[frozenset(["S"])] = {}
+    b.transitions[frozenset(["S"])]["a"] = {"A", "C", "D"}
+    b.transitions[frozenset(["S"])]["b"] = {"A", "B", "C"}
 
-     b.transitions[frozenset(["A"])] = {}
-     b.transitions[frozenset(["A"])]["a"] = set()
-     b.transitions[frozenset(["A"])]["b"] = {"A", "B"}
+    b.transitions[frozenset(["A"])] = {}
+    b.transitions[frozenset(["A"])]["a"] = set()
+    b.transitions[frozenset(["A"])]["b"] = {"A", "B"}
 
-     b.transitions[frozenset(["B"])] = {}
-     b.transitions[frozenset(["B"])]["a"] = {"A"}
-     b.transitions[frozenset(["B"])]["b"] = {"B"}
+    b.transitions[frozenset(["B"])] = {}
+    b.transitions[frozenset(["B"])]["a"] = {"A"}
+    b.transitions[frozenset(["B"])]["b"] = {"B"}
 
-     b.transitions[frozenset(["C"])] = {}
-     b.transitions[frozenset(["C"])]["a"] = {"C","D"}
-     b.transitions[frozenset(["C"])]["b"] = set()
+    b.transitions[frozenset(["C"])] = {}
+    b.transitions[frozenset(["C"])]["a"] = {"C", "D"}
+    b.transitions[frozenset(["C"])]["b"] = set()
 
-     b.transitions[frozenset(["D"])] = {}
-     b.transitions[frozenset(["D"])]["a"] = {"D"}
-     b.transitions[frozenset(["D"])]["b"] = {"C"}
+    b.transitions[frozenset(["D"])] = {}
+    b.transitions[frozenset(["D"])]["a"] = {"D"}
+    b.transitions[frozenset(["D"])]["b"] = {"C"}
 
-     b.alphabet.add("a")
-     b.alphabet.add("b")
+    b.alphabet.add("a")
+    b.alphabet.add("b")
 
-     b.minimize()
+    b.minimize()
 
-    #testing
-     a = FiniteAutomaton(set(), set(), {}, "0", set())
-     a.states.add("S")
-     a.states.add("A")
-     a.states.add("B")
-     a.states.add("C")
-     a.states.add("D")
+    # testing
+    a = FiniteAutomaton(set(), set(), {}, "0", set())
+    a.states.add("S")
+    a.states.add("A")
+    a.states.add("B")
+    a.states.add("C")
+    a.states.add("D")
 
-     a.init_state = "S"
-     a.final_states.add(frozenset(["S"]))
-     a.final_states.add(frozenset(["C"]))
-     a.final_states.add(frozenset(["D"]))
+    a.init_state = "S"
+    a.final_states.add(frozenset(["S"]))
+    a.final_states.add(frozenset(["C"]))
+    a.final_states.add(frozenset(["D"]))
 
-     a.transitions[frozenset(["S"])] = {}
-     a.transitions[frozenset(["S"])]["a"] = {"B", "C"}
-     a.transitions[frozenset(["S"])]["b"] = {"A", "D"}
+    a.transitions[frozenset(["S"])] = {}
+    a.transitions[frozenset(["S"])]["a"] = {"B", "C"}
+    a.transitions[frozenset(["S"])]["b"] = {"A", "D"}
 
-     a.transitions[frozenset(["A"])] = {}
-     a.transitions[frozenset(["A"])]["a"] = {"B"}
-     a.transitions[frozenset(["A"])]["b"] = {"A"}
+    a.transitions[frozenset(["A"])] = {}
+    a.transitions[frozenset(["A"])]["a"] = {"B"}
+    a.transitions[frozenset(["A"])]["b"] = {"A"}
 
-     a.transitions[frozenset(["B"])] = {}
-     a.transitions[frozenset(["B"])]["a"] = {"A"}
-     a.transitions[frozenset(["B"])]["b"] = {"B"}
+    a.transitions[frozenset(["B"])] = {}
+    a.transitions[frozenset(["B"])]["a"] = {"A"}
+    a.transitions[frozenset(["B"])]["b"] = {"B"}
 
-     a.transitions[frozenset(["C"])] = {}
-     a.transitions[frozenset(["C"])]["a"] = {"C"}
-     a.transitions[frozenset(["C"])]["b"] = {"D"}
+    a.transitions[frozenset(["C"])] = {}
+    a.transitions[frozenset(["C"])]["a"] = {"C"}
+    a.transitions[frozenset(["C"])]["b"] = {"D"}
 
-     a.transitions[frozenset(["D"])] = {}
-     a.transitions[frozenset(["D"])]["a"] = {"D"}
-     a.transitions[frozenset(["D"])]["b"] = {"C"}
+    a.transitions[frozenset(["D"])] = {}
+    a.transitions[frozenset(["D"])]["a"] = {"D"}
+    a.transitions[frozenset(["D"])]["b"] = {"C"}
 
-     a.alphabet.add("a")
-     a.alphabet.add("b")
+    a.alphabet.add("a")
+    a.alphabet.add("b")
 
-     a.minimize()
+    a.minimize()
+
 test()

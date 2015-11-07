@@ -38,15 +38,14 @@ class RegularExpression(object):
         """Inits RegularGrammar with the attributes introduced above.
 
         Raises:
-            ValueError: unknown operators are added to the expression.
+            ValueError: when unknown operators are added to the expression.
         """
         self.expression = expression
-        valid_symbols = list(map(chr, range(65, 91))) + \
-            list(map(chr, range(97, 123))) + [str(i) for i in range(10)]
+        valid_symbols = set(map(chr, range(32, 127))) - set("\\()|*") | {'×'}
         self.alphabet = {i for i in expression if i in valid_symbols}
 
         valid_chars = set("()|*") | self.alphabet
-        if set(expression) - valid_chars != set():
+        if set(expression) - valid_chars:
             raise ValueError
 
     def diff_aut(self, automaton, suffix):
