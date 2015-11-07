@@ -20,7 +20,7 @@ if __name__ == '__main__':
         print("Basic usage: man ./rltools")
         raise SystemExit
 
-    possible_commands = ["--dfa", "--gta", "--atg", "--rta", "--atr"]
+    possible_commands = ["--dfa", "--gta", "--atg", "--rta", "--atr", "--min"]
 
     if len(set(sys.argv).intersection(possible_commands)) > 1:
         print("Only one flag is permitted at a time.")
@@ -93,6 +93,20 @@ if __name__ == '__main__':
                     savepath = 're-' + outpath
                 save(savepath, 'regexp', reg)
                 print("RE saved in %s!" % savepath)
+            else:
+                print("Input must be an automaton.")
+
+        if "--min" in sys.argv:
+            aut = load(sys.argv[2])
+            if type(aut) is FiniteAutomaton:
+                aut.minimize()
+                outpath = re.sub('.in', r'.out', sys.argv[2])
+                if '/' in outpath:
+                    savepath = re.sub('/', r'/min-', outpath)
+                else:
+                    savepath = 'min-' + outpath
+                save(savepath, 'automaton', aut)
+                print("DFA saved in %s!" % savepath)
             else:
                 print("Input must be an automaton.")
 

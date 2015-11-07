@@ -27,7 +27,6 @@ class Tokenizer(object):
         self.automaton = automaton
         self.input_file = input_file
 
-
     def analyze(self):
         """Reads lexemes from a file and transforms them in tokens."""
         with open(self.input_file, 'r') as file:

@@ -42,6 +42,7 @@ class RegularExpression(object):
         """
         self.expression = expression
         valid_symbols = set(map(chr, range(32, 127))) - set("\\()|*") | {'×'}
+
         self.alphabet = {i for i in expression if i in valid_symbols}
         valid_chars = set("()|*") | self.alphabet
         if set(expression) - valid_chars:
@@ -402,4 +403,3 @@ class RegularExpression(object):
             states.remove(s)
 
         return expr['i', 'f']
-
