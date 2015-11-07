@@ -2,7 +2,7 @@ UFSC/CTC/INE
 INE5421 - Formal Languages and Compilers (2015/2)
 Gustavo Zambonin (13104307) & Matheus Ben-Hur de Melo Leite (13100765)
 
-Pratice I - Algorithms for Manipulation of Regular Languages
+Practice I - Algorithms for Manipulation of Regular Languages
 
 The language chosen to code these algorithms was Python, for it is easier to
 manipulate object types dynamically. Almost all the information related to the
@@ -32,6 +32,48 @@ even if those are empty.
 
 The regular expression parser accepts only unary letters alphabets. Hence, an
 expression of the form "(q0|q1*)" will be parsed with the set {'q', '0', '1'}
-as its symbols and won't match a possible desired {'q0', 'q1'} set.
+as its symbols, and won't match a possible desired {'q0', 'q1'} set. Parenthesis
+should be used whenever possible when describing regular expressions. The code
+itself should be executed using Python 3.x.
 
                                                                     02/10/2015
+
+Practice II - Lexical Analysis
+
+The lexical structure [1], specifically built for this assignment, is presented
+below, with some remarks about its inner workings. It can be used as a guide to
+write possible "programs" with this proto-language, albeit syntactically and
+semantically incorrect. Remember that the input file must end with a new line.
+
+    keyword      ::= 'else' | 'if' | 'while' | 'read' | 'write' |
+                     'int([])*' | 'bool' | 'str'
+    boolean      ::= 'False' | 'True'
+    identifier   ::= letter (letter | digit | '_')* [2]
+    letter       ::= lowercase | uppercase
+    lowercase    ::= 'a' | 'b' | ... | 'z'
+    uppercase    ::= 'A' | 'B' | ... | 'Z'
+    digit        ::= '0' | '1' | ... | '9'
+    nonzerodigit ::= '1' | ... | '9'
+    char         ::= any ASCII character between 33 and 126, with the
+                     exception of 34, 40, 41, 42, 92 and 124 [3]
+    string       ::= '"'char*'"'
+    integer      ::= nonzerodigit digit* | '0'
+    arit_op      ::= '+' | '-' | '×' | '/'
+    logic_op     ::= 'and' | 'or' | 'not'
+    comp_op      ::= '<' | '>' | '==' | '>=' | '<=' | '!='
+
+[1] Loosely based on:
+https://inst.eecs.berkeley.edu/~cs164/fa11/python-grammar.html
+
+[2] It must not match a keyword.
+
+[3] More specifically, the ASCII indexes noted are in base 10. The list
+starts at ! and ends with ~, excluding ", (, ), *, \ and |. Note that a string
+must be enclosed within double quotes. More information about this character
+set can be found on its manpage using the command
+
+    man ascii
+
+on a Unix-based OS.
+
+                                                                    06/11/2015
