@@ -45,8 +45,8 @@ below, with some remarks about its inner workings. It can be used as a guide to
 write possible "programs" with this proto-language, albeit syntactically and
 semantically incorrect. Remember that the input file must end with a new line.
 
-    keyword      ::= 'else' | 'if' | 'while' | 'read' | 'write' |
-                     'int([])*' | 'bool' | 'str'
+    keyword      ::= 'else' | 'if' | 'while' | 'read' | 'write' | 'list' |
+                     'bool' | 'str' | 'int' | boolean
     boolean      ::= 'False' | 'True'
     identifier   ::= letter (letter | digit | '_')* [2]
     letter       ::= lowercase | uppercase
@@ -61,6 +61,7 @@ semantically incorrect. Remember that the input file must end with a new line.
     arit_op      ::= '+' | '-' | '×' | '/'
     logic_op     ::= 'and' | 'or' | 'not'
     comp_op      ::= '<' | '>' | '==' | '>=' | '<=' | '!='
+    attr_op      ::= '=' | '->' | ':='
 
 [1] Loosely based on:
 https://inst.eecs.berkeley.edu/~cs164/fa11/python-grammar.html

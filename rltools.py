@@ -114,7 +114,7 @@ if __name__ == '__main__':
                 print("Input must be an automaton.")
 
         if "--lex" in sys.argv:
-            lexer = Tokenizer(load(sys.argv[2]), sys.argv[3])
+            lexer = Tokenizer(sys.argv[2])
             output = lexer.analyze()
             print('Tokens')
             pprint([t for t in output[0]])

@@ -6,7 +6,7 @@
 # Usage:
 # sh builder.sh
 
-keyword='else|if|while|read|write|int([])*|bool|str|False|True'
+keyword='else|if|while|read|write|list|bool|str|False|True'
 letter=$(echo {a..z} {A..Z})
 digit=$(echo {0..9})
 nonzerodigit=$(echo {1..9})
@@ -15,8 +15,9 @@ integer="(((${nonzerodigit// /|})(${digit// /|})*)|0)"
 char=$(sed 's/["()*\|]//g; s/./&|/g' <<< \
        "$(awk 'BEGIN{for(i=32;i<127;i++)printf "%c",i}'; echo)")
 string="(\"(${char%?})*\")"
+ops='+|-|×|/|and|or|not|>|==|>=|<=|!=|=|->|:='
 
 cd ..
-./rltools.py --rta "$keyword|$identifier|$integer|$string" >/dev/null
+./rltools.py --rta "$keyword|$identifier|$integer|$string|$ops" >/dev/null
 cd tests && mv afnd-reg.out master-automaton.out
 echo "Automaton saved in tests/master-automaton.out!"
