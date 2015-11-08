@@ -12,6 +12,14 @@ class complex_builder():
     underscore, quote = "_", "\""
     string_char = "|".join(set(map(chr, range(32, 127))) - set("\\\"()|*"))
 
+    reg_exp = RegularExpression(single_words)
+    aut = reg_exp.regexp_to_automaton()
+    aut_2 = reg_exp.rename_aut(aut)
+    aut_2.minimize()
+
+    finals_aut = list()
+    finals_aut.append(aut_2)
+
     list_regs = list()
     list_regs.append(letters)
     list_regs.append(numbers)
@@ -52,7 +60,6 @@ class complex_builder():
     aux_aut2 = reg_aux.rename_aut(aut_aux)
     aux_aut2.minimize()
 
-    finals_aut = list()
     finals_aut.append(aux_aut2)
 
     #STARTING THE INTEGER AUTOMATON-----------------------------------------|
@@ -121,6 +128,24 @@ class complex_builder():
 
     finals_aut.append(aux_aut2)
 
-def test():
+
+    #Uniting automatons
+    automatons = list()
+    while len(finals_aut) > 1:
+        automatons.append(finals_aut.pop(0))
+        automatons.append(finals_aut.pop(0))
+        aut = reg_aux.or_op(automatons)
+        aut2 = reg_aux.rename_aut(aut)
+        finals_aut.append(aut2)
+        automatons = list()
+
+    _aut = finals_aut.pop(0)
+    _aut.determinize()
+    #final_aut = reg_aux.rename_aut(_aut)
+    final_aut = _aut
+
+
+
+"""def test():
    c = complex_builder()
-test()
+test()"""
