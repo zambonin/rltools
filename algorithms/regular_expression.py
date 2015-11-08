@@ -212,7 +212,8 @@ class RegularExpression(object):
         """Implements the automaton that accepts the empty word.
 
         Returns:
-            A basic automaton with just one state and no transitions."""
+            A basic automaton with just one state and no transitions.
+        """
         return FiniteAutomaton({"q0"}, set(), {}, "q0", {"q0"})
 
     def analyse_expression(self, expression):

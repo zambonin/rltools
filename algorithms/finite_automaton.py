@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from copy import deepcopy
 
 """finite_automaton.py
 
@@ -9,6 +8,8 @@ automata through the powerset construction method, also handling epsilon-moves.
 
 Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 """
+
+from copy import deepcopy
 
 
 class FiniteAutomaton(object):

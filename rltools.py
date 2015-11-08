@@ -14,13 +14,16 @@ from algorithms.finite_automaton import FiniteAutomaton
 from algorithms.io_manager import load, save
 from algorithms.regular_expression import RegularExpression
 from algorithms.regular_grammar import RegularGrammar
+from algorithms.tokenizer import Tokenizer
+from pprint import pprint
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("Basic usage: man ./rltools")
         raise SystemExit
 
-    possible_commands = ["--dfa", "--gta", "--atg", "--rta", "--atr", "--min"]
+    possible_commands = ["--dfa", "--gta", "--atg",
+                         "--rta", "--atr", "--min", "--lex"]
 
     if len(set(sys.argv).intersection(possible_commands)) > 1:
         print("Only one flag is permitted at a time.")
@@ -109,6 +112,14 @@ if __name__ == '__main__':
                 print("DFA saved in %s!" % savepath)
             else:
                 print("Input must be an automaton.")
+
+        if "--lex" in sys.argv:
+            lexer = Tokenizer(load(sys.argv[2]), sys.argv[3])
+            output = lexer.analyze()
+            print('Tokens')
+            pprint([t for t in output[0]])
+            print('\nErrors')
+            pprint([e for e in output[1]])
 
     else:
         print("Input file is missing.")

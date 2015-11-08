@@ -23,7 +23,7 @@ def load(path):
         return set(states)
 
     def handle_transitions(old_dict):
-        new = {frozenset([i]): old_dict[i] for i in old_dict}
+        new = {frozenset(i.split(',')): old_dict[i] for i in old_dict}
         for i in new:
             for j in new[i]:
                 new[i][j] = set(new[i][j])
