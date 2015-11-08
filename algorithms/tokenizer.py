@@ -10,6 +10,7 @@ Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, November 2015.
 
 # import string
 # from algorithms.regular_expression import RegularExpression
+from algorithms.complex_builder import complex_builder
 
 
 class Tokenizer(object):
@@ -34,7 +35,8 @@ class Tokenizer(object):
             'CPOP': ['<', '>', '==', '>=', '<=', '!='],
             'ATOP': ['=', '->', ':='],
         }
-        # self.automaton = pull from builder
+        c = complex_builder()
+        self.automaton = c.final_aut
 
     def analyze(self):
         """Reads lexemes from a file and transforms them in tokens.
@@ -64,32 +66,69 @@ class Tokenizer(object):
                     if ((curr_state == frozenset() or curr_state == set())
                        and letter not in separators):
                         word += str(letter)
-                    elif letter in separators and "\"" not in word:
-                        if curr_state in self.automaton.final_states:
-                            type = [i for i in self.words
-                                    if word in self.words[i]]
-                            if type:
-                                tokens.append((word, type[0]))
-                            elif word.isdigit():
-                                tokens.append((word, 'INTG'))
-                        elif word:
-                            errors.append("{}:{} '{}' not recognized".format(
+                    elif letter in separators:# or len(word) > 0 and "\"" not in word[0]:
+                        if len(word) > 0 and "\"" not in word[0]:
+                            if curr_state in self.automaton.final_states:
+                                type = [i for i in self.words
+                                        if word in self.words[i]]
+                                if type:
+                                    tokens.append((word, type[0]))
+                                elif word.isdigit():
+                                    tokens.append((word, 'INTG'))
+                                else:
+                                    tokens.append((word, 'IDNT'))
+                                curr_state = reset
+                                word = ""
+                            elif word:
+                                errors.append("{}:{} '{}' not recognized".format(
                                           self.input_file, line_number, word))
-                        curr_state = reset
-                        word = ""
+                                curr_state = reset
+                                word = ""
+                        if len(word) != 0:
+                            word += str(letter)
+                            try:
+                                curr_state = frozenset(
+                                self.automaton.transitions[curr_state][letter])
+                            except KeyError:
+                                curr_state = set()
+                            except TypeError:
+                                curr_state = set()
                     else:
-                        if "\"" in word:
+                        """if "\"" in word:
                             if curr_state in self.automaton.final_states:
                                 tokens.append((word, 'STRG'))
                             elif letter == "\n":
                                 errors.append("{}:{} '{}' not recognized"
                                               .format(self.input_file,
-                                                      line_number, word))
-                        word += str(letter)
-                        try:
-                            curr_state = frozenset(
-                                self.automaton.transitions[curr_state][letter])
-                        except KeyError:
-                            curr_state = set()
+                                                      line_number, word))"""
+                        if letter == "\"" and len(word) > 0 and word[0] == "\"":
+                            word += str(letter)
+                            try:
+                                curr_state = frozenset(
+                                    self.automaton.transitions[curr_state][letter])
+                                if curr_state in self.automaton.final_states:
+                                    tokens.append((word, 'STRG'))
+                                else:
+                                    errors.append("{}:{} '{}' not recognized".format(
+                                          self.input_file, line_number, word))
+                            except KeyError:
+                                curr_state = set()
+                            curr_state = reset
+                            word = ""
+                        else:
+                            word += str(letter)
+                            try:
+                                curr_state = frozenset(
+                                    self.automaton.transitions[curr_state][letter])
+                            except KeyError:
+                                curr_state = set()
+                            except TypeError:
+                                curr_state = set()
 
         return tokens, errors
+
+
+def test():
+    t = Tokenizer("pasqual.pac")
+    t.analyze()
+test()
