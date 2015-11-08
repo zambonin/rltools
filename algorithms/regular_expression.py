@@ -252,13 +252,14 @@ class RegularExpression(object):
                         try:
                             after_next = expression[i+it_num]
                         except IndexError:
+                            it_num += 1
                             break
                         it_num += 1
                     if after_next == "*":
                         _list.append(after_next)
                     _list.append(_next)
                     _list.extend(nexts)
-                    expression = expression[:i] + expression[i+it_num:]
+                    expression = expression[:i] + expression[i+(it_num-1):]
                 _list.append("|")
             elif expression[i] in ["(", ")", "*"]:
                 if expression[i] == "*":
@@ -347,15 +348,20 @@ class RegularExpression(object):
             new_key = frozenset([new_states[list(set(i))[0]]])
             new_aut.transitions[new_key] = {}
             for j in automaton.transitions[i]:
-                new_aut.transitions[new_key][j] = automaton.transitions[i][j]
+                #new_aut.transitions[new_key][j] = automaton.transitions[i][j]
+                new_aut.transitions[new_key][j] = set()
                 for k in automaton.transitions[i][j]:
-                    if len(k) > 1:
-                        to_these_states = {new_states[i] for i in
-                                           automaton.transitions[i][j]}
-                        new_aut.transitions[new_key][j] = to_these_states
-                    elif isinstance(k, frozenset):
-                        to_this_state = set([new_states[list(set(k))[0]]])
-                        new_aut.transitions[new_key][j] = to_this_state
+                    if isinstance(k, frozenset):
+                        if len(k) > 1:
+                            to_these_states = {new_states[i] for i in automaton.transitions[i][j]}
+                            new_aut.transitions[new_key][j] |= to_these_states
+                        else:
+                            to_this_state = set([new_states[list(set(k))[0]]])
+                            new_aut.transitions[new_key][j] |= to_this_state
+                    else:
+                            to_this_state = set([new_states[k]])
+                            new_aut.transitions[new_key][j] |= to_this_state
+
 
         return new_aut
 
