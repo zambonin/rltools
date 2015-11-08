@@ -2,22 +2,20 @@
 # -*- coding: utf-8 -*-
 
 from algorithms.regular_expression import RegularExpression
-from algorithms.tokenizer import Tokenizer
-from pprint import pprint
+import string
 
 class complex_builder():
-    simple_identifier = '(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)'
-    numbers = '0|1|2|3|4|5|6|7|8|9'
-    nonzero_num = '1|2|3|4|5|6|7|8|9'
-    underscore = '_'
-    quote = '"'
-    string = " |!|#|$|%|&|'|+|,|-|.|/|0|1|2|3|4|5|6|7|8|9|:|;|<|=|>|?|@|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|[|]|^|_|`|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z|{|}|~"
-
+    single_words = '+|-|×|/|else|if|while|read|write|list|bool|str|int|=|->|:=|and|or|not|<|>|==|>=|<=|!=|False|True'
+    letters = "({})".format("|".join(string.ascii_letters))
+    numbers = "|".join(string.digits)
+    nonzero = "|".join(string.digits)[2:]
+    underscore, quote = "_", "\""
+    string_char = "|".join(set(map(chr, range(32, 127))) - set("\\\"()|*"))
 
     list_regs = list()
-    list_regs.append(simple_identifier)
+    list_regs.append(letters)
     list_regs.append(numbers)
-    list_regs.append(simple_identifier)
+    list_regs.append(letters)
     list_regs.append(underscore)
 
     list_auts = list()
@@ -60,7 +58,7 @@ class complex_builder():
     #STARTING THE INTEGER AUTOMATON-----------------------------------------|
 
     list_regs = list()
-    list_regs.append(nonzero_num)
+    list_regs.append(nonzero)
     list_regs.append(numbers)
     list_regs.append('0')
 
@@ -94,7 +92,7 @@ class complex_builder():
     #STARTING THE STRING AUTOMATON--------------------------------------|
     list_regs = list()
     list_regs.append(quote)
-    list_regs.append(string)
+    list_regs.append(string_char)
     list_regs.append(quote)
 
     list_auts = list()

@@ -8,7 +8,8 @@ A simple text segmentation utility for the lexical analysis part of a compiler.
 Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, November 2015.
 """
 
-from algorithms.regular_expression import RegularExpression
+# import string
+# from algorithms.regular_expression import RegularExpression
 
 
 class Tokenizer(object):
@@ -33,24 +34,7 @@ class Tokenizer(object):
             'CPOP': ['<', '>', '==', '>=', '<=', '!='],
             'ATOP': ['=', '->', ':='],
         }
-        self.automaton = self.build_language()
-
-    # identifier   ::= letter (letter | digit | '_')* [2]
-    # letter       ::= lowercase | uppercase
-    # lowercase    ::= 'a' | 'b' | ... | 'z'
-    # uppercase    ::= 'A' | 'B' | ... | 'Z'
-    # digit        ::= '0' | '1' | ... | '9'
-    # nonzerodigit ::= '1' | ... | '9'
-    # char         ::= any ASCII character between 33 and 126, with the
-    #                  exception of 34, 40, 41, 42, 92 and 124 [3]
-    # string       ::= '"'char*'"'
-    # integer      ::= nonzerodigit digit* | '0'
-
-    def build_language(self):
-        accepted = "|".join(["|".join(self.words[i]) for i in self.words])
-        regexp = RegularExpression(accepted)
-        aut = RegularExpression.regexp_to_automaton(regexp)
-        return aut.minimize()
+        # self.automaton = pull from builder
 
     def analyze(self):
         """Reads lexemes from a file and transforms them in tokens.
@@ -80,17 +64,27 @@ class Tokenizer(object):
                     if ((curr_state == frozenset() or curr_state == set())
                        and letter not in separators):
                         word += str(letter)
-                    elif letter in separators:
+                    elif letter in separators and "\"" not in word:
                         if curr_state in self.automaton.final_states:
                             type = [i for i in self.words
-                                    if word in self.words[i]][0]
-                            tokens.append((word, type))
+                                    if word in self.words[i]]
+                            if type:
+                                tokens.append((word, type[0]))
+                            elif word.isdigit():
+                                tokens.append((word, 'INTG'))
                         elif word:
                             errors.append("{}:{} '{}' not recognized".format(
                                           self.input_file, line_number, word))
                         curr_state = reset
                         word = ""
                     else:
+                        if "\"" in word:
+                            if curr_state in self.automaton.final_states:
+                                tokens.append((word, 'STRG'))
+                            elif letter == "\n":
+                                errors.append("{}:{} '{}' not recognized"
+                                              .format(self.input_file,
+                                                      line_number, word))
                         word += str(letter)
                         try:
                             curr_state = frozenset(

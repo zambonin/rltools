@@ -32,7 +32,7 @@ class FiniteAutomaton(object):
 
     def __str__(self):
         """Pretty-prints the finite automaton object attributes."""
-        states = "States: %s" % (', '.join(str(set(s)) for s in self.states))
+        states = "States: %s" % (', '.join(str(set([s])) for s in self.states))
         alphabet = "Alphabet: %s" % (', '.join(l for l in self.alphabet))
         transitions = "Transitions: "
         for t in self.transitions:
