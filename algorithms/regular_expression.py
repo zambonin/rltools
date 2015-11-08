@@ -256,10 +256,11 @@ class RegularExpression(object):
                             it_num += 1
                             break
                         it_num += 1
-                    if after_next == "*":
-                        _list.append(after_next)
                     _list.append(_next)
                     _list.extend(nexts)
+                    if after_next == "*":
+                        _list.append(after_next)
+                        it_num +=1
                     expression = expression[:i] + expression[i+(it_num-1):]
                 _list.append("|")
             elif expression[i] in ["(", ")", "*"]:
@@ -289,17 +290,22 @@ class RegularExpression(object):
                 _next = list.pop(0)
                 while _next in self.alphabet:
                     aux_lst.append(self.single_state(_next))
+                    _next = list.pop(0)
+                    if _next == "*":
+                        aut = [aux_lst.pop()]
+                        aux_lst.append(self.closure_op(aut))
                     if len(aux_lst) == 2:
                         param_list = [aux_lst.pop(0)]
                         param_list.append(aux_lst.pop(0))
                         aux_lst.append(self.concat_op(param_list))
-                    _next = list.pop(0)
+
                 if len(partial_auts) == 2:
                     aux_list = [partial_auts.pop(0)]
                     aux_list.append(partial_auts.pop(0))
                     partial_auts.append(self.concat_op(aux_list))
                 partial_auts.extend(aux_lst)
-                list.insert(0, _next)
+                if _next != "*":
+                    list.insert(0, _next)
             if char in self.alphabet:
                 if len(partial_auts) == 2:
                     aux_list = [partial_auts.pop(0)]
