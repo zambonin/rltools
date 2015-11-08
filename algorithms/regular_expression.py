@@ -266,6 +266,8 @@ class RegularExpression(object):
             elif expression[i] in ["(", ")", "*"]:
                 if expression[i] == "*":
                     _list.append("*")
+                if expression[i] == "(":
+                    _list.append(separator)
                 expression = expression[:i] + expression[i+1:]
 
         return _list
