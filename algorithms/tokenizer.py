@@ -85,14 +85,20 @@ class Tokenizer(object):
                                 curr_state = reset
                                 word = ""
                         if len(word) != 0:
-                            word += str(letter)
-                            try:
-                                curr_state = frozenset(
-                                self.automaton.transitions[curr_state][letter])
-                            except KeyError:
-                                curr_state = set()
-                            except TypeError:
-                                curr_state = set()
+                            if letter != "\n":
+                                word += str(letter)
+                                try:
+                                    curr_state = frozenset(
+                                    self.automaton.transitions[curr_state][letter])
+                                except KeyError:
+                                    curr_state = set()
+                                except TypeError:
+                                    curr_state = set()
+                            else:
+                                errors.append("{}:{} '{}' not recognized".format(
+                                          self.input_file, line_number, word))
+                                curr_state = reset
+                                word = ""
                     else:
                         """if "\"" in word:
                             if curr_state in self.automaton.final_states:
@@ -124,8 +130,7 @@ class Tokenizer(object):
                                 curr_state = set()
                             except TypeError:
                                 curr_state = set()
-
-        return tokens, errors
+            return tokens, errors
 
 
 def test():
