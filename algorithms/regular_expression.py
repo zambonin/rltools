@@ -245,7 +245,10 @@ class RegularExpression(object):
                         aux += 1
                     expression = expression[:i] + expression[i+aux:]
                 elif _next in self.alphabet:
-                    after_next = expression[i+2]
+                    try:
+                        after_next = expression[i+2]
+                    except IndexError:
+                        after_next = ""
                     it_num = 3
                     nexts = list()
                     while after_next in self.alphabet:
