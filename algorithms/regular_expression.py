@@ -225,35 +225,47 @@ class RegularExpression(object):
             A list with a special notation denoting the order and priority of
             the operators and symbols.
         """
+        separator = "ε"
         i = 0
-        list = []
+        _list = []
         while len(expression) != 0:
             if expression[i] in self.alphabet:
-                list.append(expression[i])
+                _list.append(expression[i])
                 expression = expression[:i] + expression[i+1:]
             elif expression[i] == "|":
+                _list.append(separator)
                 _next = expression[i+1]
                 if _next == "(":
                     aux = 2
                     while _next != ")":
                         _next = expression[i+aux]
                         if _next != ")":
-                            list.append(_next)
+                            _list.append(_next)
                         aux += 1
                     expression = expression[:i] + expression[i+aux:]
                 elif _next in self.alphabet:
                     after_next = expression[i+2]
+                    it_num = 3
+                    nexts = list()
+                    while after_next in self.alphabet:
+                        nexts.append(after_next)
+                        try:
+                            after_next = expression[i+it_num]
+                        except IndexError:
+                            break
+                        it_num += 1
                     if after_next == "*":
-                        list.append(after_next)
-                    list.append(_next)
-                    expression = expression[:i] + expression[i+3:]
-                list.append("|")
+                        _list.append(after_next)
+                    _list.append(_next)
+                    _list.extend(nexts)
+                    expression = expression[:i] + expression[i+it_num:]
+                _list.append("|")
             elif expression[i] in ["(", ")", "*"]:
                 if expression[i] == "*":
-                    list.append("*")
+                    _list.append("*")
                 expression = expression[:i] + expression[i+1:]
 
-        return list
+        return _list
 
     def execute_operations(self, list):
         """Assembles automata according to operators and symbols. It is a
@@ -270,6 +282,22 @@ class RegularExpression(object):
         partial_auts = []
         while len(list) != 0:
             char = list.pop(0)
+            if char == "ε":
+                aux_lst = []
+                _next = list.pop(0)
+                while _next in self.alphabet:
+                    aux_lst.append(self.single_state(_next))
+                    if len(aux_lst) == 2:
+                        param_list = [aux_lst.pop(0)]
+                        param_list.append(aux_lst.pop(0))
+                        aux_lst.append(self.concat_op(param_list))
+                    _next = list.pop(0)
+                if len(partial_auts) == 2:
+                    aux_list = [partial_auts.pop(0)]
+                    aux_list.append(partial_auts.pop(0))
+                    partial_auts.append(self.concat_op(aux_list))
+                partial_auts.extend(aux_lst)
+                list.insert(0, _next)
             if char in self.alphabet:
                 if len(partial_auts) == 2:
                     aux_list = [partial_auts.pop(0)]
