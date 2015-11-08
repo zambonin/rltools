@@ -39,7 +39,7 @@ class FiniteAutomaton(object):
                                          str(self.transitions[t]))
         init_state = "Initial state: %s" % self.init_state
         final = "Final states: %s" % (', '.join(str(set(f))
-                                      for f in self.final_states))
+                                                for f in self.final_states))
         return "%s\n%s\n%s\n%s\n%s" % (states, alphabet, transitions,
                                        init_state, final)
 
@@ -49,6 +49,7 @@ class FiniteAutomaton(object):
         Returns:
             The set of every epsilon-closure of the NFA.
         """
+
         def single_closure(state):
             """Computes the epsilon-closure for a single state of a NFA.
 
@@ -142,9 +143,9 @@ class FiniteAutomaton(object):
             new_finals = set()
             for classs in classes:
                 i += 1
-                new_states.add("q"+str(i))
-                new_transitions[frozenset(["q"+str(i)])] = {}
-                mapping[frozenset(classs)] = "q"+str(i)
+                new_states.add("q" + str(i))
+                new_transitions[frozenset(["q" + str(i)])] = {}
+                mapping[frozenset(classs)] = "q" + str(i)
             for classs in classes:
                 for state in classs:
                     aux_class = ""
@@ -162,23 +163,33 @@ class FiniteAutomaton(object):
                             break
                         except KeyError:
                             new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter] = set()
-                        for piece in self.transitions[state][letter]:
-                                another_aux_class = ""
-                                for another_class in classes:
-                                    if frozenset([piece]) in another_class:
-                                        another_aux_class = another_class
-                                        break
-                                try:
-                                    new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter].add(mapping[frozenset(another_aux_class)])
-                                except KeyError:
-                                    pass
+                        piece = frozenset(self.transitions[state][letter])
+                        another_aux_class = ""
+                        for another_class in classes:
+                            if piece in another_class:
+                                another_aux_class = another_class
+                                break
+                        try:
+                            new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter].add(mapping[frozenset(another_aux_class)])
+                        except KeyError:
+                            pass
+
+                    """for piece in self.transitions[state][letter]:
+                        another_aux_class = ""
+                        for another_class in classes:
+                            if frozenset([piece]) in another_class:
+                                another_aux_class = another_class
+                                break
+                        try:
+                            new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter].add(
+                                mapping[frozenset(another_aux_class)])
+                        except KeyError:
+                            pass"""
+
             self.transitions = new_transitions
             self.init_state = new_init
             self.final_states = new_finals
             self.states = new_states
-
-
-
 
         def belongs_to(self, state):
             for lst in classes:
@@ -210,7 +221,6 @@ class FiniteAutomaton(object):
 
         old_classes = list()
 
-
         while classes != old_classes:
             old_classes = deepcopy(classes)
             for classs in classes:
@@ -227,5 +237,4 @@ class FiniteAutomaton(object):
                             classes.append(class_which_belongs)
 
         assembler(self)
-        #TODO this return above is wrong, we need to create the new automaton using this classes
-
+    # TODO this return above is wrong, we need to create the new automaton using this classes
