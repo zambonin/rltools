@@ -31,7 +31,7 @@ Converts a finite automaton to a regular expression.
 .BI \--min\  "automaton_file"
 Minimizes a finite automaton to the smallest possible number of states.
 .TP
-.BI \--lex\  "automaton_file source_file"
+.BI \--lex\  "source_file"
 Reads a text file with possible commands for the language described, powered by
 the automaton logic.
 .SH AUTHORS
