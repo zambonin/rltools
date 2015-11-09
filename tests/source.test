@@ -1,0 +1,12 @@
+str presentation = "Hello!"
+these should be identifiers,
+but don't take them for granted
+1 + 1 is an operation
+but "1+1" is a string
+"this can't happen
+you should finish your double_quotes
+like this: " " " " " " " " "" ""
+False == True == 0
+0 / 0 NaN
+utf is bad for the program ç_ç
+and that is it! "

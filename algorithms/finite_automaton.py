@@ -133,7 +133,31 @@ class FiniteAutomaton(object):
         self.transitions = new_transitions
 
     def minimize(self):
-        self.determinize()
+
+        def belongs_to(self, state):
+            for lst in classes:
+                if len(lst) > 1 or lst not in old_classes:
+                    for letter in self.transitions[lst[0]]:
+                        both = False
+                        arrival_list = list()
+                        arrival_list2 = list()
+                        for old_list in old_classes:
+                            head = lst.pop(0)
+                            lst.insert(0, head)
+                            if (frozenset(self.transitions[head][letter])
+                               in old_list):
+                                arrival_list = old_list
+                            if (frozenset(self.transitions[state][letter])
+                               in old_list):
+                                arrival_list2 = old_list
+                        if arrival_list == arrival_list2:
+                            both = True
+                        if not both:
+                            break
+                    if both:
+                        return lst
+
+            return [frozenset(state)]
 
         def assembler(self):
             i = 0
@@ -157,13 +181,16 @@ class FiniteAutomaton(object):
                     if set(state).pop() in self.init_state:
                         new_init = str(mapping[frozenset(aux_class)])
                     if state in self.final_states:
-                        new_finals.add(frozenset([mapping[frozenset(aux_class)]]))
+                        new_finals.add(
+                            frozenset([mapping[frozenset(aux_class)]]))
                     for letter in self.transitions[state]:
                         try:
-                            new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter]
+                            new_transitions[frozenset([mapping[
+                                frozenset(aux_class)]])][letter]
                             break
                         except KeyError:
-                            new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter] = set()
+                            new_transitions[frozenset([mapping[
+                                frozenset(aux_class)]])][letter] = set()
                         piece = frozenset(self.transitions[state][letter])
                         another_aux_class = ""
                         for another_class in classes:
@@ -171,56 +198,23 @@ class FiniteAutomaton(object):
                                 another_aux_class = another_class
                                 break
                         try:
-                            new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter].add(mapping[frozenset(another_aux_class)])
-                        except KeyError:
-                            pass
-
-                    """for piece in self.transitions[state][letter]:
-                        another_aux_class = ""
-                        for another_class in classes:
-                            if frozenset([piece]) in another_class:
-                                another_aux_class = another_class
-                                break
-                        try:
-                            new_transitions[frozenset([mapping[frozenset(aux_class)]])][letter].add(
+                            new_transitions[frozenset([mapping[
+                                frozenset(aux_class)]])][letter].add(
                                 mapping[frozenset(another_aux_class)])
                         except KeyError:
-                            pass"""
+                            pass
 
             self.transitions = new_transitions
             self.init_state = new_init
             self.final_states = new_finals
             self.states = new_states
 
-        def belongs_to(self, state):
-            for lst in classes:
-                if len(lst) > 1 or lst not in old_classes:
-                    for letter in self.transitions[lst[0]]:
-                        both = False
-                        arrival_list = list()
-                        arrival_list2 = list()
-                        for old_list in old_classes:
-                            head = lst.pop(0)
-                            lst.insert(0, head)
-                            if frozenset(self.transitions[head][letter]) in old_list:
-                                arrival_list = old_list
-                            if frozenset(self.transitions[state][letter]) in old_list:
-                                arrival_list2 = old_list
+        self.determinize()
 
-                        if arrival_list == arrival_list2:
-                            both = True
-                        if not both:
-                            break
-                    if both:
-                        return lst
-            return [frozenset(state)]
-
-        classes = list()
+        classes, old_classes = list(), list()
         classes.append(list(self.final_states))
         if len(list(self.states - self.final_states)) > 0:
             classes.append(list(self.states - self.final_states))
-
-        old_classes = list()
 
         while classes != old_classes:
             old_classes = deepcopy(classes)
@@ -238,4 +232,3 @@ class FiniteAutomaton(object):
                             classes.append(class_which_belongs)
 
         assembler(self)
-    # TODO this return above is wrong, we need to create the new automaton using this classes

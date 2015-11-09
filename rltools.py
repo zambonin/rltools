@@ -15,7 +15,6 @@ from algorithms.io_manager import load, save
 from algorithms.regular_expression import RegularExpression
 from algorithms.regular_grammar import RegularGrammar
 from algorithms.tokenizer import Tokenizer
-from pprint import pprint
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
@@ -116,10 +115,13 @@ if __name__ == '__main__':
         if "--lex" in sys.argv:
             lexer = Tokenizer(sys.argv[2])
             output = lexer.analyze()
-            print('Tokens')
-            pprint([t for t in output[0]])
+            print('\nTokens')
+            for i in range(0, len(output[0]), 5):
+                print(output[0][i:i+5])
             print('\nErrors')
-            pprint([e for e in output[1]])
+            for e in output[1]:
+                print(e)
+            print()
 
     else:
         print("Input file is missing.")

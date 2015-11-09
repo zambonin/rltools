@@ -43,7 +43,8 @@ Practice II - Lexical Analysis
 The lexical structure [1], specifically built for this assignment, is presented
 below, with some remarks about its inner workings. It can be used as a guide to
 write possible "programs" with this proto-language, albeit syntactically and
-semantically incorrect. Remember that the input file must end with a new line.
+semantically incorrect. Remember that the input file must end with a new line,
+and separators are essential to the scanning of the tokens (1+1 != 1 + 1).
 
     keyword      ::= 'else' | 'if' | 'while' | 'read' | 'write' | 'list' |
                      'bool' | 'str' | 'int' | boolean
@@ -77,4 +78,4 @@ set can be found on its manpage using the command
 
 on a Unix-based OS.
 
-                                                                    06/11/2015
+                                                                    08/11/2015

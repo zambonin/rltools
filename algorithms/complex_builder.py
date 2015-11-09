@@ -4,13 +4,21 @@
 from algorithms.regular_expression import RegularExpression
 import string
 
-class complex_builder():
-    single_words = '+|-|×|/|else|if|while|read|write|list|bool|str|int|=|->|:=|and|or|not|<|>|==|>=|<=|!=|False|True'
+
+class complex_builder(object):
+
+    # ########## Declaration of words ##########
+
+    words = 'else|if|while|read|write|list|bool|str|int|False|True'
+    ops = '=|->|:=|and|or|not|<|>|==|>=|<=|!=|+|-|×|/'
+    single_words = "{}|{}".format(words, ops)
     letters = "({})".format("|".join(string.ascii_letters))
     numbers = "|".join(string.digits)
     nonzero = "|".join(string.digits)[2:]
-    underscore, quote = "_", "\""
+    underscore, quote, zero = "_", "\"", "0"
     string_char = "|".join(set(map(chr, range(32, 127))) - set("\\\"()|*"))
+
+    # ########## Reserved words recognizer automaton ##########
 
     reg_exp = RegularExpression(single_words)
     aut = reg_exp.regexp_to_automaton()
@@ -19,6 +27,8 @@ class complex_builder():
 
     finals_aut = list()
     finals_aut.append(aut_2)
+
+    # ########## Identifier recognizer automaton ##########
 
     list_regs = list()
     list_regs.append(letters)
@@ -39,18 +49,15 @@ class complex_builder():
     automatons.append(list_auts.pop(1))
     automatons.append(list_auts.pop(1))
     aut_aux = reg_aux.or_op(automatons)
-    #aut_aux2 = reg_aux.rename_aut(aut_aux)
 
     automatons = list()
     automatons.append(aut_aux)
     automatons.append(list_auts.pop(1))
     aut_aux = reg_aux.or_op(automatons)
-    #aut_aux2 = reg_aux.rename_aut(aut_aux)
 
     automatons = list()
     automatons.append(aut_aux)
     aut_aux = reg_aux.closure_op(automatons)
-    #aux_aux2 = reg_aux.rename_aut(aut_aux)
     list_auts.append(aut_aux)
 
     automatons = list()
@@ -62,12 +69,12 @@ class complex_builder():
 
     finals_aut.append(aux_aut2)
 
-    #STARTING THE INTEGER AUTOMATON-----------------------------------------|
+    # ########## Integer recognizer automaton ##########
 
     list_regs = list()
     list_regs.append(nonzero)
     list_regs.append(numbers)
-    list_regs.append('0')
+    list_regs.append(zero)
 
     list_auts = list()
 
@@ -95,8 +102,8 @@ class complex_builder():
 
     finals_aut.append(aux_aut2)
 
+    # ########## String recognizer automaton ##########
 
-    #STARTING THE STRING AUTOMATON--------------------------------------|
     list_regs = list()
     list_regs.append(quote)
     list_regs.append(string_char)
@@ -128,8 +135,8 @@ class complex_builder():
 
     finals_aut.append(aux_aut2)
 
+    # ########## Union of the automata created above ##########
 
-    #Uniting automatons
     automatons = list()
     while len(finals_aut) > 1:
         automatons.append(finals_aut.pop(0))
@@ -141,11 +148,4 @@ class complex_builder():
 
     _aut = finals_aut.pop(0)
     _aut.determinize()
-    #final_aut = reg_aux.rename_aut(_aut)
     final_aut = _aut
-
-
-
-"""def test():
-   c = complex_builder()
-test()"""
