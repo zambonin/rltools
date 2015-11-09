@@ -54,7 +54,7 @@ class FiniteAutomaton(object):
         def single_closure(state):
             """Computes the epsilon-closure for a single state of a NFA.
 
-            Attributes:
+            Arguments:
                 state: the source state for the epsilon-closure computation.
 
             Returns:
@@ -74,7 +74,9 @@ class FiniteAutomaton(object):
         return {state: single_closure(state) for state in self.states}
 
     def determinize(self):
-        """Modifies the input automaton inplace to be caracterized as a DFA."""
+        """Modifies the input automaton in-place to be caracterized as a
+        determinized finite automaton.
+        """
         opened, closed, final_states = set(), set(), set()
         new_transitions = {}
 
@@ -133,8 +135,19 @@ class FiniteAutomaton(object):
         self.transitions = new_transitions
 
     def minimize(self):
-
+        """Modifies the input automaton in-place through an algorithm similar
+        to Hopcroft's so the resulting DFA has the minimum number of states.
+        """
         def belongs_to(self, state):
+            """Auxiliar method for the partition refinement logic, also known
+            as equivalence classes between states.
+
+            Arguments:
+                state: The state that may be placed in a new partition.
+
+            Returns:
+                A new partition with the respective states.
+            """
             for lst in classes:
                 if len(lst) > 1 or lst not in old_classes:
                     for letter in self.transitions[lst[0]]:
@@ -160,6 +173,9 @@ class FiniteAutomaton(object):
             return [frozenset(state)]
 
         def assembler(self):
+            """Constructs the minimal automaton from the equivalence classes
+            computed previously.
+            """
             i = 0
             new_states = set()
             mapping = {}

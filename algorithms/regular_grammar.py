@@ -51,7 +51,7 @@ class RegularGrammar(object):
     def automaton_to_grammar(aut):
         """Transforms a deterministic finite automaton to a regular grammar.
 
-        Attributes:
+        Arguments:
             aut: the automaton that will be transformed.
 
         Returns:
@@ -78,7 +78,7 @@ class RegularGrammar(object):
     def grammar_to_automaton(gram):
         """Transforms a regular grammmar to a DFA.
 
-        Attributes:
+        Arguments:
             gram: the grammar that will be read.
 
         Returns:

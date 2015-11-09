@@ -8,7 +8,7 @@ A simple text segmentation utility for the lexical analysis part of a compiler.
 Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, November 2015.
 """
 
-from algorithms.complex_builder import complex_builder
+from algorithms.complex_builder import Builder
 
 
 class Tokenizer(object):
@@ -33,7 +33,7 @@ class Tokenizer(object):
             'CPOP': ['<', '>', '==', '>=', '<=', '!='],
             'ATOP': ['=', '->', ':='],
         }
-        self.automaton = complex_builder().final_aut
+        self.automaton = Builder().final_aut
 
     def analyze(self):
         """Reads lexemes from a file and transforms them in tokens.

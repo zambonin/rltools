@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from algorithms.regular_expression import RegularExpression
 import string
+from algorithms.regular_expression import RegularExpression
 
 
-class complex_builder(object):
-
+class Builder(object):
+    """Responsible for outputting the automaton that recognizes the proposed
+    lexical structure. Reserved words and other simple automata (such as [0-9]
+    or [a-zA-Z]) can be computed through regular expressions implicitly, only
+    to be united later with the or, concatenation and Kleene star operations.
+    """
     # ########## Declaration of words ##########
 
     words = 'else|if|while|read|write|list|bool|str|int|False|True'

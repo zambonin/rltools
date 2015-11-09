@@ -51,7 +51,7 @@ class RegularExpression(object):
     def diff_aut(self, automaton, suffix):
         """Renames the automaton's states.
 
-        Attributes:
+        Arguments:
             automaton: the automaton to be manipulated.
             suffix: the chosen string to be added to the states.
 
@@ -80,7 +80,7 @@ class RegularExpression(object):
     def add_transitions(self, automaton):
         """Fills the missing transitions on an automaton.
 
-        Attributes:
+        Arguments:
             automaton: the automaton to be manipulated.
 
         Returns:
@@ -99,7 +99,7 @@ class RegularExpression(object):
     def or_op(self, automatons):
         """Implements the regular expression alternation operator.
 
-        Attributes:
+        Arguments:
             automatons: a list of two automatons to be merged.
 
         Returns:
@@ -126,7 +126,7 @@ class RegularExpression(object):
     def concat_op(self, automatons):
         """Implements the regular expression concatenation operator.
 
-        Attributes:
+        Arguments:
             automatons: a list of two automatons to be merged.
 
         Returns:
@@ -155,7 +155,7 @@ class RegularExpression(object):
     def closure_op(self, automatons):
         """Implements the regular expression Kleene star operator.
 
-        Attributes:
+        Arguments:
             automatons: a list of automatons to be operated on.
 
         Returns:
@@ -190,7 +190,7 @@ class RegularExpression(object):
     def single_state(self, transition):
         """Implements the most basic type of automaton.
 
-        Attributes:
+        Arguments:
             transition: the only transition made on the automaton, represented
             by a set of symbols.
 
@@ -219,7 +219,7 @@ class RegularExpression(object):
     def analyse_expression(self, expression):
         """Reads and consumes the given expression, organizing it into a list.
 
-        Attributes:
+        Arguments:
             expression: the regular expression in form of a string.
 
         Returns:
@@ -281,7 +281,7 @@ class RegularExpression(object):
         basic automata and apply operations to them, the final product
         getting more complex over every iteration of the list.
 
-        Attributes:
+        Arguments:
             a list of symbols and operators with a respective order.
 
         Returns:
@@ -334,7 +334,7 @@ class RegularExpression(object):
     def rename_aut(self, automaton):
         """Makes the automaton's states' names readable.
 
-        Attributes:
+        Arguments:
             automaton: the automaton with confusing names.
 
         Returns:
@@ -392,7 +392,7 @@ class RegularExpression(object):
           all transitions that pass through that state;
           * end the process when the only remaining states are the ones added.
 
-        Attributes:
+        Arguments:
             automaton: the automaton to be consumed and converted.
 
         Returns:
