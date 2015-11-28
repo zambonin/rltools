@@ -3,14 +3,21 @@
 
 """ll_parser.py
 
-Simple implementation of a LL(1) parser, with the grammar produced by hand.
+Simple implementation of an LL(1) parser, with the grammar produced by hand.
 
 Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, November 2015.
 """
 
 
 class Parser(object):
+    """An LL(1) parser is a top-down parser for a subset of context-free
+    languages. It parses the input from left to right, performing a
+    leftmost derivation of the sentence, using a single token as
+    lookahead. Formally, it is a deterministic pushdown automaton.
+    """
+    
     def __init__(self):
+        """Inits a Parser object."""
         master = {
             "<S>": {
                 'program':    'program ; <INST> begin <PROGRAM> ;'
@@ -121,8 +128,7 @@ def stackable_prod(grm):
 
 
 def derive(grammar, buffer, st=['$', '<S>']):
-    """
-    Responsible for derivating, recursively, the buffer of words from the
+    """Responsible for derivating, recursively, the buffer of words from the
     grammar, with the help of an explicit stack.
 
     Arguments:
