@@ -1,0 +1,20 @@
+program ;
+    type identifier = digit ;
+    type identifier = boolean ;
+    begin
+        if identifier comp_op identifier
+            identifier = identifier × identifier ;
+        end
+        else
+            identifier = digit ;
+        end
+
+        read identifier
+        write digit
+
+        while identifier comp_op identifier
+            begin
+                identifier = string ;
+            end
+    end ;
+end ;

@@ -1,5 +1,5 @@
 .\" Manpage for rltools.
-.TH man 7 "08 Nov 2015" "2.0" "rltools manpage"
+.TH man 7 "27 Nov 2015" "3.0" "rltools manpage"
 .SH NAME
 .B rltools
 \- regular language tools
@@ -34,5 +34,9 @@ Minimizes a finite automaton to the smallest possible number of states.
 .BI \--lex\  "source_file"
 Reads a text file with possible commands for the language described, powered by
 the automaton logic.
+.TP
+.BI \--syn\  "source_file"
+Reads a text file with possible placeholder source code for the language
+described by the LL(1) grammar in ll_parser.py, and analyzes its syntax.
 .SH AUTHORS
 Written by Gustavo Zambonin and Matheus Ben-Hur de Melo Leite.

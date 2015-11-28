@@ -11,18 +11,19 @@ Gustavo Zambonin & Matheus Ben-Hur de Melo Leite, UFSC, October 2015.
 import re
 import sys
 from algorithms.finite_automaton import FiniteAutomaton
-from algorithms.io_manager import load, save
+from algorithms.io_manager import load, save, read_source
 from algorithms.regular_expression import RegularExpression
 from algorithms.regular_grammar import RegularGrammar
 from algorithms.tokenizer import Tokenizer
+from algorithms.ll_parser import Parser, derive
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("Basic usage: man ./rltools")
         raise SystemExit
 
-    possible_commands = ["--dfa", "--gta", "--atg",
-                         "--rta", "--atr", "--min", "--lex"]
+    possible_commands = ["--dfa", "--gta", "--atg", "--rta",
+                         "--atr", "--min", "--lex", "--syn"]
 
     if len(set(sys.argv).intersection(possible_commands)) > 1:
         print("Only one flag is permitted at a time.")
@@ -98,7 +99,7 @@ if __name__ == '__main__':
             else:
                 print("Input must be an automaton.")
 
-        if "--min" in sys.argv:
+        elif "--min" in sys.argv:
             aut = load(sys.argv[2])
             if type(aut) is FiniteAutomaton:
                 aut.minimize()
@@ -112,7 +113,7 @@ if __name__ == '__main__':
             else:
                 print("Input must be an automaton.")
 
-        if "--lex" in sys.argv:
+        elif "--lex" in sys.argv:
             lexer = Tokenizer(sys.argv[2])
             output = lexer.analyze()
             print('\nTokens')
@@ -122,6 +123,10 @@ if __name__ == '__main__':
             for e in output[1]:
                 print(e)
             print()
+
+        elif "--syn" in sys.argv:
+            source = read_source(sys.argv[2])
+            print(derive(Parser().grammar, source))
 
     else:
         print("Input file is missing.")

@@ -130,3 +130,10 @@ def save(path, header, obj):
                       'type': 'regexp',
                       'expression': obj,
                       }, file_out, indent=4, ensure_ascii=False)
+
+
+def read_source(in_file):
+    """Reads source code for the LL(1) parser."""
+    with open(in_file) as f:
+        pieces = [i.split() for i in f]
+        return [sub for p in pieces for sub in p]
