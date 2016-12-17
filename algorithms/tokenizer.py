@@ -60,8 +60,8 @@ class Tokenizer(object):
                 line_number += 1
                 curr_state, word = reset, ""
                 for letter in line:
-                    if ((curr_state == frozenset() or curr_state == set())
-                       and letter not in separators):
+                    if ((curr_state == frozenset() or curr_state == set()) and
+                       letter not in separators):
                         word += str(letter)
                     elif letter in separators:
                         if len(word) > 0 and "\"" not in word[0]:

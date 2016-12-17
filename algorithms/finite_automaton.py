@@ -236,8 +236,7 @@ class FiniteAutomaton(object):
             old_classes = deepcopy(classes)
             for classs in classes:
                 if len(classs) > 1:
-                    aux_c = classs[:]
-                    head_state = aux_c.pop(0)
+                    aux_c = classs[1:]
                     for state in aux_c:
                         index = classs.index(state)
                         classs.pop(index)

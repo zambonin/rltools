@@ -118,7 +118,7 @@ if __name__ == '__main__':
             output = lexer.analyze()
             print('\nTokens')
             for i in range(0, len(output[0]), 5):
-                print(output[0][i:i+5])
+                print(output[0][i:i + 5])
             print('\nErrors')
             for e in output[1]:
                 print(e)

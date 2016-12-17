@@ -58,11 +58,13 @@ class RegularExpression(object):
         Returns:
             An automaton with different names for states.
         """
-        aux_aut = FiniteAutomaton({state+suffix for state in automaton.states},
-                                  automaton.alphabet, {},
-                                  automaton.init_state + suffix,
-                                  {frozenset([set(state).pop() + suffix])
-                                      for state in automaton.final_states})
+        aux_aut = FiniteAutomaton(
+            {state + suffix for state in automaton.states},
+            automaton.alphabet,
+            {},
+            automaton.init_state + suffix,
+            {frozenset([set(state).pop() + suffix])
+                for state in automaton.final_states})
 
         for state in automaton.transitions:
             key = frozenset([set(state).pop() + suffix])
@@ -107,11 +109,9 @@ class RegularExpression(object):
         """
         aut1 = self.diff_aut(automatons[0], "%")
         aut2 = self.diff_aut(automatons[1], "&")
-        or_aut = FiniteAutomaton({"initOr"}, set(), {
-            frozenset(["initOr"]): {
-                aut1.epsilon: set()
-            }
-            }, "initOr", set())
+        or_aut = FiniteAutomaton(
+            {"initOr"}, set(), {frozenset(["initOr"]): {aut1.epsilon: set()}},
+            "initOr", set())
 
         for each in [aut1, aut2]:
             or_aut.states |= each.states
@@ -163,11 +163,9 @@ class RegularExpression(object):
             repetitions of its original language.
         """
         clsr_aut = FiniteAutomaton(
-            {"initClsr"}, set(), {
-                frozenset(["initClsr"]): {
-                    automatons[0].epsilon: set()
-                }
-                }, "initClsr", {frozenset(["initClsr"])})
+            {"initClsr"}, set(),
+            {frozenset(["initClsr"]): {automatons[0].epsilon: set()}},
+            "initClsr", {frozenset(["initClsr"])})
 
         e = clsr_aut.epsilon
         for each in automatons:
@@ -199,13 +197,13 @@ class RegularExpression(object):
         """
         single_aut = FiniteAutomaton({"q0" + transition, "q1" + transition},
                                      {transition}, {
-                                     frozenset(["q0"+transition]): {
+                                     frozenset(["q0" + transition]): {
                                          transition: {
-                                             frozenset(["q1"+transition])
+                                             frozenset(["q1" + transition])
                                          }
-                                     }, frozenset(["q1"+transition]): {}},
+                                     }, frozenset(["q1" + transition]): {}},
                                      "q0" + transition,
-                                     {frozenset(["q1"+transition])})
+                                     {frozenset(["q1" + transition])})
         return self.add_transitions(single_aut)
 
     def empty_word(self):
@@ -232,21 +230,21 @@ class RegularExpression(object):
         while len(expression) != 0:
             if expression[i] in self.alphabet:
                 _list.append(expression[i])
-                expression = expression[:i] + expression[i+1:]
+                expression = expression[:i] + expression[i + 1:]
             elif expression[i] == "|":
                 _list.append(separator)
-                _next = expression[i+1]
+                _next = expression[i + 1]
                 if _next == "(":
                     aux = 2
                     while _next != ")":
-                        _next = expression[i+aux]
+                        _next = expression[i + aux]
                         if _next != ")":
                             _list.append(_next)
                         aux += 1
-                    expression = expression[:i] + expression[i+aux:]
+                    expression = expression[:i] + expression[i + aux:]
                 elif _next in self.alphabet:
                     try:
-                        after_next = expression[i+2]
+                        after_next = expression[i + 2]
                     except IndexError:
                         after_next = ""
                     it_num = 3
@@ -254,7 +252,7 @@ class RegularExpression(object):
                     while after_next in self.alphabet:
                         nexts.append(after_next)
                         try:
-                            after_next = expression[i+it_num]
+                            after_next = expression[i + it_num]
                         except IndexError:
                             it_num += 1
                             break
@@ -264,14 +262,14 @@ class RegularExpression(object):
                     if after_next == "*":
                         _list.append(after_next)
                         it_num += 1
-                    expression = expression[:i] + expression[i+(it_num-1):]
+                    expression = expression[:i] + expression[i + it_num - 1:]
                 _list.append("|")
             elif expression[i] in ["(", ")", "*"]:
                 if expression[i] == "*":
                     _list.append("*")
                 if expression[i] == "(":
                     _list.append(separator)
-                expression = expression[:i] + expression[i+1:]
+                expression = expression[:i] + expression[i + 1:]
 
         return _list
 

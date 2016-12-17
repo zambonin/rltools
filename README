@@ -15,10 +15,10 @@ the program when possible.
 
 A semi-automated test file was placed on the associated folder for these
 operations, making it easier to claim the consistency of the I/O operations.
-Powered by Bash scripting, it executes determinizations and conversions from and
-to finite automata, regular grammars and regular expressions consecutively using
-the same outputs it created earlier in a cyclic manner, asserting the files'
-contents regularity.
+Powered by Bash scripting, it executes determinizations and conversions from
+and to finite automata, regular grammars and regular expressions consecutively
+using the same outputs it created earlier in a cyclic manner, asserting the
+files' contents regularity.
 
     sh autotester.sh <non-deterministic finite automaton input file>
 
@@ -32,11 +32,13 @@ even if those are empty.
 
 The regular expression parser accepts only unary letters alphabets. Hence, an
 expression of the form "(q0|q1*)" will be parsed with the set {'q', '0', '1'}
-as its symbols, and won't match a possible desired {'q0', 'q1'} set. Parenthesis
-should be used whenever possible when describing regular expressions. The code
-itself should be executed using Python 3.x.
+as its symbols, and won't match a possible desired {'q0', 'q1'} set.
+Parenthesis should be used whenever possible when describing regular
+expressions. The code itself should be executed using Python 3.x.
 
                                                                     02/10/2015
+
+Original assignment: e65b8a1b03c7be85279dcd6236d3064d892b6ffd
 
 Practice II - Lexical Analysis
 
@@ -79,3 +81,16 @@ set can be found on its manpage using the command
 on a Unix-based OS.
 
                                                                     08/11/2015
+
+Original assignment: 155d45589027987b6e3b840f9799918eda49f1f5
+
+Practice III - Parsing
+
+An LL(1) parser was created using a grammar constructed manually through
+first/follow sets. The documents describing that process are stored inside
+the `docs/` folder. It derives its productions according to the resulting
+parsing table, programmed as a Python executable.
+
+                                                                    30/11/2015
+
+Original assignment: 22d84ed0d365fff847148db1256eb4d1b5afbd38

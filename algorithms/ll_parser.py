@@ -15,97 +15,97 @@ class Parser(object):
     leftmost derivation of the sentence, using a single token as
     lookahead. Formally, it is a deterministic pushdown automaton.
     """
-    
+
     def __init__(self):
         """Inits a Parser object."""
         master = {
             "<S>": {
-                'program':    'program ; <INST> begin <PROGRAM> ;'
+                'program': 'program ; <INST> begin <PROGRAM> ;'
             },
             "<INST>": {
-                'type':       'type identifier = <CONTENT> ; <INST>',
-                'begin':      'ε'
+                'type': 'type identifier = <CONTENT> ; <INST>',
+                'begin': 'ε'
             },
             "<CONTENT>": {
-                'digit':      'digit',
-                'boolean':    'boolean',
-                'string':     'string',
-                'list':       'list'
+                'digit': 'digit',
+                'boolean': 'boolean',
+                'string': 'string',
+                'list': 'list'
             },
             "<PROGRAM>": {
                 'identifier': '<ATTR> <PROGRAM>',
-                'while':      '<LOOP> <PROGRAM>',
-                'if':         '<COND> <PROGRAM>',
-                'read':       '<IO> <PROGRAM>',
-                'write':      '<IO> <PROGRAM>',
-                'end':        'end'
+                'while': '<LOOP> <PROGRAM>',
+                'if': '<COND> <PROGRAM>',
+                'read': '<IO> <PROGRAM>',
+                'write': '<IO> <PROGRAM>',
+                'end': 'end'
             },
             "<ATTR>": {
                 'identifier': 'identifier = <EXP> ;'
             },
             "<LOOP>": {
-                'while':      'while <LOGEXP> begin <PROGRAM> end ;'
+                'while': 'while <LOGEXP> begin <PROGRAM> end ;'
             },
             "<COND>": {
-                'if':         'if <LOGEXP> <PROGRAM> <COND\'>'
+                'if': 'if <LOGEXP> <PROGRAM> <COND\'>'
             },
             "<COND'>": {
-                'else':       'else <PROGRAM> end',
-                'end':        'end'
+                'else': 'else <PROGRAM> end',
+                'end': 'end'
             },
             "<LOGEXP>": {
                 'identifier': 'identifier <LOGEXP\'>'
             },
             "<LOGEXP'>": {
-                'comp_op':    'comp_op identifier',
-                'begin':      'ε',
+                'comp_op': 'comp_op identifier',
+                'begin': 'ε',
                 'identifier': 'ε',
-                'while':      'ε',
-                'if':         'ε',
-                'else':       'ε',
-                'read':       'ε',
-                'write':      'ε',
-                'logic_op':   'comp_op identifier'
+                'while': 'ε',
+                'if': 'ε',
+                'else': 'ε',
+                'read': 'ε',
+                'write': 'ε',
+                'logic_op': 'comp_op identifier'
             },
             "<IO>": {
-                'read':       'read identifier',
-                'write':      'write <CONTENT>'
+                'read': 'read identifier',
+                'write': 'write <CONTENT>'
             },
             "<EXP>": {
                 'identifier': '<T> <E\'>',
-                'digit':      '<T> <E\'>',
-                'boolean':    '<T> <E\'>',
-                'string':     '<T> <E\'>',
-                '(':          '<T> <E\'>'
+                'digit': '<T> <E\'>',
+                'boolean': '<T> <E\'>',
+                'string': '<T> <E\'>',
+                '(': '<T> <E\'>'
             },
             "<E'>": {
-                '+':          '+ <T> <E\'>',
-                '-':          '- <T> <E\'>',
-                ';':          'ε',
-                ')':          'ε'
+                '+': '+ <T> <E\'>',
+                '-': '- <T> <E\'>',
+                ';': 'ε',
+                ')': 'ε'
             },
             "<T>": {
                 'identifier': '<F> <T\'>',
-                'digit':      '<F> <T\'>',
-                'boolean':    '<F> <T\'>',
-                'string':     '<F> <T\'>',
-                '(':          '<F> <T\'>'
+                'digit': '<F> <T\'>',
+                'boolean': '<F> <T\'>',
+                'string': '<F> <T\'>',
+                '(': '<F> <T\'>'
             },
             "<T'>": {
-                '×':          '× <F> <T\'>',
-                '/':          '/ <F> <T\'>',
-                ';':          'ε',
-                '(':          'ε',
-                ')':          'ε',
-                '+':          'ε',
-                '-':          'ε'
+                '×': '× <F> <T\'>',
+                '/': '/ <F> <T\'>',
+                ';': 'ε',
+                '(': 'ε',
+                ')': 'ε',
+                '+': 'ε',
+                '-': 'ε'
             },
             "<F>": {
                 'identifier': 'identifier',
-                'digit':      'digit',
-                'boolean':    'boolean',
-                'string':     'string',
-                '(':          '( <EXP> )'
+                'digit': 'digit',
+                'boolean': 'boolean',
+                'string': 'string',
+                '(': '( <EXP> )'
             }
         }
 
@@ -113,7 +113,7 @@ class Parser(object):
 
 
 def stackable_prod(grm):
-    """Splits the production rules in stackable pieces
+    """Splits the production rules in stackable pieces.
 
     Arguments:
         grm: the grammar, with the productions in string form.
